@@ -4,6 +4,7 @@ import './styles.css';
 
 export const Profile = () => {
     const { user, logout } = useContext(AuthContext);
+    console.log('user', user);
 
     const handleLogout = () => {
         logout();  // This will clear the user from the context and localStorage
@@ -42,18 +43,21 @@ export const Profile = () => {
                     <div className="profile-content">
                         <img className="user-avatar" src={getImageUrl(user.id, user.avatar, 'avatar')} alt={`${user.username}'s avatar`} />
                         <div className="profile-status">
-                            <h1>| {user.username}</h1>
                             <div className="user-roles">
                                 {user.roles
                                   .filter(role => role.name !== '@everyone')  // Filtering out the '@everyone' role
                                   .map((role) => (
-                                      <span key={role.id} style={{ color: getRoleColor(role.color), backgroundColor:'#333', borderRadius:'20px', padding:'5px', marginRight:'10px' }}>
+                                      <span key={role.id} style={{ color: getRoleColor(role.color), backgroundColor:'#333', borderRadius:'20px', padding:'8px', marginRight:'10px', fontSize:'15px' }}>
                                           {role.name}
                                       </span>
                                 ))}
                             </div>
+
                         </div>
+                        
                     </div>
+                    <h1>| {user.username}</h1>
+
                     <button onClick={handleLogout}>Logout</button>
                 </div>
             )}
