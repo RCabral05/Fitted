@@ -1,0 +1,42 @@
+.profile {
+    max-width: 600px;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif; 
+    overflow: auto;
+}
+.profile-content{
+    width: 90%;
+    margin: auto;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: row;
+    margin-top: -15%;
+    align-items: flex-end;
+}
+.profile-status{
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 50%;
+
+}
+.profile-status h1 {
+    font-size: 20px;
+    margin-top: 15%;
+    margin-left: 5%;
+}
+.user-avatar{
+    width: 130px;
+    height: 130px;
+    border-radius: 50%; /* circular avatar */
+    margin-bottom: 10px;
+    border: 3px solid black;
+}
+
+.user-banner {
+    width: 100%; /* full container width */
+    height: auto; /* maintain aspect ratio */
+}

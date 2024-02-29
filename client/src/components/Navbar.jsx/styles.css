@@ -1,0 +1,14 @@
+.navbar{
+    /* border: 1px solid red; */
+    width: 100vw;
+    height: 7%;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+    background-color: #333;
+}
+.navbar a{
+    color: white;
+    padding-right: 20px;
+}
