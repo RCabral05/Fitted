@@ -33,7 +33,7 @@ export function StoreDetails() {
     console.log('Submitting:', dataToSubmit);
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/stores`, dataToSubmit);
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/create-stores`, dataToSubmit);
       console.log('Store created:', response.data);
       // Handle success, perhaps redirect or clear form
     } catch (error) {

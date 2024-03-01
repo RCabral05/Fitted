@@ -1,31 +1,14 @@
-import React, { useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { AuthContext } from '../../context/AuthContext';
+import React from 'react';
 
-export function BrandDetails() {
-  const { user } = useContext(AuthContext);
-  const [stores, setStores] = useState([]);
-
-  useEffect(() => {
-    const fetchStores = async () => {
-      if (user && user.id) {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/stores/${user.id}`);
-          setStores(response.data); // Assuming this is an array of store objects
-        } catch (error) {
-          console.error('Error fetching stores:', error.response?.data || error.message);
-        }
-      }
-    };
-
-    fetchStores();
-  }, [user]);
+export function BrandDetails(store) {
+  console.log(store.store[0]);
+  const allStores = store.store;
 
   return (
     <div>
-      {stores.length > 0 ? (
+      {allStores.length > 0 ? (
         <ul>
-          {stores.map((store, index) => (
+          {allStores.map((store, index) => (
             <li key={index}>
               <h2>{store.storeName}</h2>
               <p>Email: {store.storeEmail}</p>

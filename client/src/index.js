@@ -14,6 +14,8 @@ import ProfilePage from "./pages/WebsitePages/ProfilePage";
 import CreateStorePage from "./pages/WebsitePages/CreateStorePage";
 import BrandDashboardPage from "./pages/BrandDashboard/BrandDashboardPage";
 import BrandProductsPage from "./pages/BrandDashboard/BrandProductsPage";
+import ProductPage from "./pages/WebsitePages/ProductPage";
+import AllStoresPage from "./pages/WebsitePages/AllStoresPage";
 
 // Create root element
 const rootElement = document.getElementById("root");
@@ -25,13 +27,14 @@ root.render(
       <CartProvider>
         <Routes>
           <Route path="/" element={<App />}>
+            <Route index element={<ProductPage />} />
             {/* <Route path="/SignUp" element={<SignUp />} /> */}
             <Route path="/Connect-Discord" element={<DiscordConnectPage />}/>
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/server-users" element={<ServerUsersPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/create-store" element={<CreateStorePage />} />
-            <Route path="/brand-products" element={<BrandProductsPage />} />
+            <Route path="/all-stores" element={<AllStoresPage />} />
             <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
             <Route path="*" element={<p>Route not found</p>} />
           </Route>

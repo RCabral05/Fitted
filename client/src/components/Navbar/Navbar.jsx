@@ -12,7 +12,7 @@ export const Navbar = () => {
         <a href="/Profile">Profile</a>
         <a href="/create-store">Create Store</a>
         <a href="/brand-dashboard">Brand Dash</a>
-        <a href="/brand-products">Brand Prod</a>
+        <a href="/all-stores">All Stores</a>
     </div>
   );
 };

@@ -22,6 +22,9 @@ const ProductSchema = new Schema({
     type: Number,
     required: true
   },
+  sku: {
+    type: Number,
+  },
   quantity: {
     type: Number,
     default: 0 // Set to 0 to handle 'unlimited' by not setting a maximum
@@ -34,7 +37,7 @@ const ProductSchema = new Schema({
     type: String,
     required: true
   },
-  collection: {
+  collections: {
     type: String
   },
   category: {
@@ -43,11 +46,16 @@ const ProductSchema = new Schema({
   },
   tags: [{
     type: String
-  }]
+  }],
+  storeId: {
+    type: Schema.Types.ObjectId, // Assuming the storeId is an ObjectId
+    ref: 'Store', // Adjust this to your actual store model name if it's different
+    required: true
+  },
 }, {
   timestamps: true // Adds createdAt and updatedAt timestamps
 });
 
-const Products = model("Product", ProductSchema);
+const Products = model("Products", ProductSchema);
 
 export default Products;

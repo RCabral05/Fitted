@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
-import './styles.css';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+// import './styles.css';
 
-export function BrandProducts(products) {
-
-  console.log('products', products.products);
-
-  const allProducts = products.products
+export const ProductList = (products) => {
+  const allProducts= products.products;
 
   return (
-
-    <div className="brandproducts">
+    <div className="productList">
       {allProducts.length > 0 ? (
         allProducts.map(product => (
           <div key={product._id} className="product">
@@ -23,6 +19,5 @@ export function BrandProducts(products) {
         <p>No products found.</p>
       )}
     </div>
-
   );
-}
+};

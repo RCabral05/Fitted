@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import stores from './routes/stores.js';
 import discord from './routes/discord.js';
 import { connectToServer } from "./db/conn.js";
-
+import products from './routes/products.js';
 
 // Initialize Express
 const app = express();
@@ -20,6 +20,7 @@ app.use(json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(discord);
 app.use(stores);
+app.use(products);
 
 // Constants
 const port = process.env.PORT || 3001;

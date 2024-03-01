@@ -24,7 +24,7 @@ const validateStore = [
 ];
   
 
-router.post('/api/stores', createAccountLimiter, validateStore, async (req, res) => {
+router.post('/api/create-stores', createAccountLimiter, validateStore, async (req, res) => {
     console.log('in store');
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -71,4 +71,14 @@ router.get('/api/stores/:discordId', async (req, res) => {
   });
   
 
+  router.get('/api/stores', async (req, res) => {
+    try {
+      const stores = await Store.find({});
+      res.json(stores);
+    } catch (error) {
+      console.error('Error fetching all stores:', error);
+      res.status(500).json({ message: 'Failed to fetch all stores', error: error.toString() });
+    }
+  });
+  
 export default router;
