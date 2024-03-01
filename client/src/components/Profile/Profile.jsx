@@ -47,7 +47,7 @@ export const Profile = () => {
                                 {user.roles
                                   .filter(role => role.name !== '@everyone')  // Filtering out the '@everyone' role
                                   .map((role) => (
-                                      <span key={role.id} style={{ color: getRoleColor(role.color), backgroundColor:'#333', borderRadius:'20px', padding:'8px', marginRight:'10px', fontSize:'15px' }}>
+                                      <span key={role.id} style={{ color: getRoleColor(role.color), backgroundColor:'black', borderRadius:'20px', padding:'8px', paddingRight:'8px', paddingLeft:'8px',marginRight:'10px', fontSize:'15px' }}>
                                           {role.name}
                                       </span>
                                 ))}

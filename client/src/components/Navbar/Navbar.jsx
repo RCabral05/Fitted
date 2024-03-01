@@ -10,6 +10,9 @@ export const Navbar = () => {
         <a href="/">Home</a>
         <a href="/Connect-Discord">Sign In</a>
         <a href="/Profile">Profile</a>
+        <a href="/create-store">Create Store</a>
+        <a href="/brand-dashboard">Brand Dash</a>
+        <a href="/brand-products">Brand Prod</a>
     </div>
   );
 };

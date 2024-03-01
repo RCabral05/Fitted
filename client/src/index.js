@@ -11,6 +11,9 @@ import DiscordConnectPage from "./pages/DiscordPages/DiscordConnectPage";
 import SuccessPage from "./pages/DiscordPages/SuccessPage";
 import ServerUsersPage from "./pages/DiscordPages/ServerUsersPage";
 import ProfilePage from "./pages/WebsitePages/ProfilePage";
+import CreateStorePage from "./pages/WebsitePages/CreateStorePage";
+import BrandDashboardPage from "./pages/BrandDashboard/BrandDashboardPage";
+import BrandProductsPage from "./pages/BrandDashboard/BrandProductsPage";
 
 // Create root element
 const rootElement = document.getElementById("root");
@@ -27,6 +30,9 @@ root.render(
             <Route path="/success" element={<SuccessPage />} />
             <Route path="/server-users" element={<ServerUsersPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/create-store" element={<CreateStorePage />} />
+            <Route path="/brand-products" element={<BrandProductsPage />} />
+            <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
             <Route path="*" element={<p>Route not found</p>} />
           </Route>
         </Routes>

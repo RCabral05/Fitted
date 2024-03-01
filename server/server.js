@@ -3,7 +3,7 @@ import express, { json } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-
+import stores from './routes/stores.js';
 import discord from './routes/discord.js';
 import { connectToServer } from "./db/conn.js";
 
@@ -19,7 +19,7 @@ app.use(cors());
 app.use(json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(discord);
-
+app.use(stores);
 
 // Constants
 const port = process.env.PORT || 3001;
