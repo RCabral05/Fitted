@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './styles.css';
-import { useStores } from '../../../../context/StoreContext'; // Import the StoreContext
+import { useStores } from '../../../../context/StoreContext'; // Adjust the import path as needed
 import { useProducts } from '../../../../context/ProductsContext';
 import { BrandAddProducts } from '../AddProducts/BrandAddProducts';
 import { BrandUpdateProducts } from '../EditProducts/BrandUpdateProducts';
 
 export function BrandProducts({ products }) {
-  const { stores } = useStores(); // Use the StoreContext
+  const { stores } = useStores();
   const [view, setView] = useState('products');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { deleteProduct } = useProducts();
@@ -24,7 +24,6 @@ export function BrandProducts({ products }) {
     try {
       await deleteProduct(productId);
       console.log('Product deleted successfully');
-      // Optionally, refresh the products list or handle UI changes
     } catch (error) {
       console.error('Error deleting product:', error);
     }
@@ -41,15 +40,29 @@ export function BrandProducts({ products }) {
 
       {view === 'products' && (
         products?.length > 0 ? (
-          products.map(product => (
-            <div key={product._id} className="product">
-              <h3>{product.title}</h3>
-              <p>Status: {product.status}</p>
-              <p>Quantity: {product.quantity}</p>
-              <button className="edit-button" onClick={() => handleUpdateClick(product)}>Edit</button>
-              <button className="delete-button" onClick={() => handleDeleteClick(product._id)}>Delete</button>
-            </div>
-          ))
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map(product => (
+                <tr key={product._id}>
+                  <td>{product.title}</td>
+                  <td>{product.status}</td>
+                  <td>{product.quantity}</td>
+                  <td>
+                    <button className="edit-button" onClick={() => handleUpdateClick(product)}>Edit</button>
+                    <button className="delete-button" onClick={() => handleDeleteClick(product._id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p>No products found.</p>
         )

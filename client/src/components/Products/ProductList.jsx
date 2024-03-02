@@ -17,7 +17,7 @@ export const ProductList = (products) => {
     <div className="productList">
       {allProducts.length > 0 ? (
         allProducts.map(product => (
-          <div key={product._id} className="product" onClick={() => showProductDetails(product._id)}>
+          <div key={product._id}  onClick={() => showProductDetails(product._id)}>
             <h3>{product.title}</h3>
             <p>{product.description}</p>
             {/* Additional product details can be displayed here */}
