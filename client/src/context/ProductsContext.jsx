@@ -15,6 +15,8 @@ export const ProductsProvider = ({ children }) => {
         fetchStores();
     }, []);
 
+    // Product Functions
+
     const fetchProducts = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/products`);
@@ -24,25 +26,7 @@ export const ProductsProvider = ({ children }) => {
         }
     };
 
-    const fetchStores = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/stores`);
-            setStores(response.data);
-        } catch (error) {
-            console.error('Error fetching stores:', error);
-        }
-    };
 
-    const createStore = async (formData, userId) => {
-        try {
-            const dataToSubmit = { ...formData, discordId: userId };
-            const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/create-stores`, dataToSubmit);
-            console.log('Store created:', response.data);
-            // Update local state if necessary, e.g., setStores([...stores, response.data])
-        } catch (error) {
-            console.error('Error creating store:', error.response?.data || error.message);
-        }
-    };
 
     const fetchProductsForStore = async (storeId) => {
         try {
@@ -93,6 +77,33 @@ export const ProductsProvider = ({ children }) => {
         } catch (error) {
             console.error("Error fetching product:", error);
             throw error; // You might want to throw the error or handle it as needed
+        }
+    };
+
+// ================================================================================================================================================
+// ================================================================================================================================================
+// ================================================================================================================================================
+// ================================================================================================================================================
+// ================================================================================================================================================
+// Stores Functions
+
+    const fetchStores = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/stores`);
+            setStores(response.data);
+        } catch (error) {
+            console.error('Error fetching stores:', error);
+        }
+    };
+
+    const createStore = async (formData, userId) => {
+        try {
+            const dataToSubmit = { ...formData, discordId: userId };
+            const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/create-stores`, dataToSubmit);
+            console.log('Store created:', response.data);
+            // Update local state if necessary, e.g., setStores([...stores, response.data])
+        } catch (error) {
+            console.error('Error creating store:', error.response?.data || error.message);
         }
     };
 
