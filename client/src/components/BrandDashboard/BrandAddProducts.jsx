@@ -1,51 +1,49 @@
 import React, { useState } from 'react';
 import './styles.css';
-import axios from 'axios';
+import { useProducts } from '../../context/ProductsContext'; // Adjust the import path as needed
 
-export function BrandAddProducts({ onSubmit, initialData, store }) {
-    console.log('l', store);
-  const [product, setProduct] = useState(initialData || {
-    title: '',
-    description: '',
-    status: 'available',
-    images: [],
-    price: '',
-    sku: '',
-    quantity: 0,
-    vendor: '',
-    collections: '',
-    category: '',
-    tags: []
-  });
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct({ ...product, [name]: value });
-  };
+export function BrandAddProducts({ initialData, store }) {
+    const { addProduct } = useProducts(); // Destructure the addProduct function from the context
+    const [product, setProduct] = useState(initialData || {
+        title: '',
+        description: '',
+        status: 'available',
+        images: [],
+        price: '',
+        sku: '',
+        quantity: 0,
+        vendor: '',
+        collections: '',
+        category: '',
+        tags: []
+    });
 
-  const handleFileChange = (e) => {
-    // Assuming you want to store only the file URLs in the database
-    // Convert files to URLs and update the state
-    const files = Array.from(e.target.files);
-    const urls = files.map(file => URL.createObjectURL(file));
-    setProduct({ ...product, images: [...product.images, ...urls] });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const productWithStoreId = {
-        ...product,
-        storeId: store._id // Assuming you want to use the first store's ID
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProduct({ ...product, [name]: value });
     };
-    try {
-        const response = await axios.post(`${process.env.REACT_APP_BASE_URL}add-product`, productWithStoreId);
-        console.log(response.data);
-        // onSubmit(product); // You can still call the provided onSubmit prop if needed
-    } catch (error) {
-        console.error("Error adding product:", error.response.data);
-    }
-};
 
-  
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const urls = files.map(file => URL.createObjectURL(file));
+        setProduct({ ...product, images: [...product.images, ...urls] });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const productWithStoreId = {
+            ...product,
+            storeId: store._id // Ensuring the store ID is attached to the product
+        };
+
+        try {
+            await addProduct(productWithStoreId); // Using the addProduct from context
+            console.log('Product added successfully');
+            // You might want to reset the form or give feedback to the user here
+        } catch (error) {
+            console.error("Error adding product:", error);
+        }
+    };
 
   return (
     <div className="brand-prod">

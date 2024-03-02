@@ -82,8 +82,22 @@ export const ProductsProvider = ({ children }) => {
         }
     };
 
+    const fetchProductById = async (productId) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/products/${productId}`);
+            if (response.data) {
+                // Assuming you want to set this product in the context
+                // setProduct(response.data); // You need to have a state for individual product
+                return response.data; // Or simply return the product data
+            }
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            throw error; // You might want to throw the error or handle it as needed
+        }
+    };
+
     return (
-        <ProductsContext.Provider value={{ products, stores, createStore, }}>
+        <ProductsContext.Provider value={{ products, stores, createStore, fetchProductsForStore, addProduct, updateProduct, deleteProduct, fetchProductById }}>
             {children}
         </ProductsContext.Provider>
     );

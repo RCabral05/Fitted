@@ -1,46 +1,37 @@
 import React, { useEffect, useState, useContext } from 'react';
 // import './styles.css';
-import { useCart } from '../../context/CartContext';
+import { useProducts } from '../../context/ProductsContext'; // Adjust this import as needed
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 
 export const ProductDetails = () => {
     const { productId } = useParams();
-    console.log('details id', productId);
+    const { fetchProductById } = useProducts(); // Use the newly created function
     const [product, setProduct] = useState(null);
     const [productNotFound, setProductNotFound] = useState(false);
-    console.log('prod', product);
 
     useEffect(() => {
-        const fetchProduct = async () => {
-            if (!productId) {
-                console.error("Product ID is undefined.");
-                setProductNotFound(true);
-                return;
-            }
-
+        const loadProduct = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/products/${productId}`);
-                // console.log(response);
-                if (response.data) {
-                    setProduct(response.data);
-                
-                } else {
-                    setProductNotFound(true);
-                }
+                const fetchedProduct = await fetchProductById(productId);
+                setProduct(fetchedProduct);
             } catch (error) {
                 console.error("Error fetching product:", error);
                 setProductNotFound(true);
             }
         };
 
-        fetchProduct();
-
-    }, [productId]);
+        if (productId) {
+            loadProduct();
+        }
+    }, [productId, fetchProductById]);
 
     return (
         <div className="product-details-container">
-            <li>{product?.title}</li>
+            {product ? (
+                <li>{product.title}</li>
+            ) : (
+                productNotFound ? <p>Product not found.</p> : <p>Loading product...</p>
+            )}
         </div>
     );
 };
