@@ -44,12 +44,10 @@ export function BrandDashboard() {
   return (
     <div>
       <button onClick={() => setActiveView('details')}>Details</button>
-      <button onClick={() => setActiveView('addProducts')}>Add Products</button>
       <button onClick={() => setActiveView('products')}>Products</button>
 
       {activeView === 'details' && <BrandDetails store={store} />}
-      {activeView === 'addProducts' && <BrandAddProducts store={store}/>}
-      {activeView === 'products' && <BrandProducts products={products}/>}
+      {activeView === 'products' && <BrandProducts store={store} products={products}/>}
     </div>
   );
 }

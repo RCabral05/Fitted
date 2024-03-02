@@ -3,10 +3,11 @@ import './styles.css';
 import axios from 'axios';
 
 export function BrandAddProducts({ onSubmit, initialData, store }) {
+    console.log('l', store);
   const [product, setProduct] = useState(initialData || {
     title: '',
     description: '',
-    status: '',
+    status: 'available',
     images: [],
     price: '',
     sku: '',
@@ -33,7 +34,7 @@ export function BrandAddProducts({ onSubmit, initialData, store }) {
     e.preventDefault();
     const productWithStoreId = {
         ...product,
-        storeId: store[0]._id // Assuming you want to use the first store's ID
+        storeId: store._id // Assuming you want to use the first store's ID
     };
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_URL}add-product`, productWithStoreId);
