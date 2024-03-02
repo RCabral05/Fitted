@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 // Removed axios import since we are now using context
 // import './styles.css'; // Uncomment if you are using CSS
-import { useProducts } from '../../context/ProductsContext'; // Adjust the import path as needed
+import { useStores } from '../../context/StoreContext'; // Adjust the import path as needed
 
 export const AllStores = () => {
-  const { stores } = useProducts(); // Use the stores from the context
+  const { stores } = useStores(); // Use the stores from the context
 
   console.log('Stores:', stores);
 

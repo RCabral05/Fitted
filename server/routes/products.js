@@ -69,6 +69,45 @@ router.get('/api/products/:productId', async (req, res) => {
     }
 });
 
+router.put('/api/products/:id', async (req, res) => {
+    const { id } = req.params; // Extracting the product ID from URL parameters
+    const updatedData = req.body; // The updated product data from the request body
+
+    try {
+        // Attempting to find the product by ID and update it with the new data
+        const product = await Products.findByIdAndUpdate(id, updatedData, { new: true });
+        if (!product) {
+            // If no product is found with the given ID, send a 404 response
+            return res.status(404).send({ message: "Product not found" });
+        }
+
+        // If the product is successfully found and updated, send back the updated product data
+        res.json({ message: "Product updated successfully", product });
+    } catch (error) {
+        // If there's an error during the process, log it and send a 500 response
+        console.error('Error updating product:', error);
+        res.status(500).send({ message: "Failed to update product", error: error.toString() });
+    }
+});
+
+// In your Express router file
+
+router.delete('/api/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedProduct = await Products.findByIdAndDelete(id);
+
+        if (!deletedProduct) {
+            return res.status(404).send({ message: "Product not found" });
+        }
+
+        res.send({ message: "Product deleted successfully" });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).send({ message: "Failed to delete product", error: error.toString() });
+    }
+});
+
 
 
 export default router;

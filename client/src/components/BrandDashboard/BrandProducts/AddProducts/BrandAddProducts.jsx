@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './styles.css';
-import { useProducts } from '../../context/ProductsContext'; // Adjust the import path as needed
+import { useProducts } from '../../../../context/ProductsContext'; // Adjust the import path as needed
 
 export function BrandAddProducts({ initialData, store }) {
     const { addProduct } = useProducts(); // Destructure the addProduct function from the context

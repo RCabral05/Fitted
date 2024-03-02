@@ -8,11 +8,9 @@ export const useProducts = () => useContext(ProductsContext);
 
 export const ProductsProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
-    const [stores, setStores] = useState([]);
 
     useEffect(() => {
         fetchProducts();
-        fetchStores();
     }, []);
 
     // Product Functions
@@ -80,35 +78,10 @@ export const ProductsProvider = ({ children }) => {
         }
     };
 
-// ================================================================================================================================================
-// ================================================================================================================================================
-// ================================================================================================================================================
-// ================================================================================================================================================
-// ================================================================================================================================================
-// Stores Functions
 
-    const fetchStores = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/stores`);
-            setStores(response.data);
-        } catch (error) {
-            console.error('Error fetching stores:', error);
-        }
-    };
-
-    const createStore = async (formData, userId) => {
-        try {
-            const dataToSubmit = { ...formData, discordId: userId };
-            const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/create-stores`, dataToSubmit);
-            console.log('Store created:', response.data);
-            // Update local state if necessary, e.g., setStores([...stores, response.data])
-        } catch (error) {
-            console.error('Error creating store:', error.response?.data || error.message);
-        }
-    };
 
     return (
-        <ProductsContext.Provider value={{ products, stores, createStore, fetchProductsForStore, addProduct, updateProduct, deleteProduct, fetchProductById }}>
+        <ProductsContext.Provider value={{ products, fetchProductsForStore, addProduct, updateProduct, deleteProduct, fetchProductById }}>
             {children}
         </ProductsContext.Provider>
     );

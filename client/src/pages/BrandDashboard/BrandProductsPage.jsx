@@ -1,4 +1,4 @@
-import { BrandProducts } from "../../components/BrandDashboard/BrandProducts";
+import { BrandProducts } from "../../components/BrandDashboard/BrandProducts/Products/BrandProducts";
 
 export const BrandProductsPage = () => {
   return (
