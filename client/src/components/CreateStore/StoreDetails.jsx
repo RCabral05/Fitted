@@ -1,12 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useContext } from 'react';
+import { useProducts } from '../../context/ProductsContext'; 
 import { AuthContext } from "../../context/AuthContext";
 
 export function StoreDetails() {
   const { user } = useContext(AuthContext);
+  const { createStore } = useProducts();
 
   const [formData, setFormData] = useState({
-    discordId: user?.id || '',
     storeName: '',
     storeEmail: '',
     storeNumber: '',
@@ -15,31 +15,13 @@ export function StoreDetails() {
     storeDomain: ''
   });
 
-  useEffect(() => {
-    if (user.id) {
-        setFormData(formData => ({ ...formData, discordId: user?.id || '' }));
-    }
-  }, [user.id]); // Only re-run the effect if discordId changes
-
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    // Ensure the discordId is included in the formData when submitting
-    const dataToSubmit = { ...formData, discordId: user?.id };
-    console.log('Submitting:', dataToSubmit);
-
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/create-stores`, dataToSubmit);
-      console.log('Store created:', response.data);
-      // Handle success, perhaps redirect or clear form
-    } catch (error) {
-      console.error('Error creating store:', error.response?.data || error.message);
-      // Handle error, show feedback to user
-    }
+    createStore(formData, user?.id);
   };
 
   return (

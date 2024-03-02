@@ -10,7 +10,6 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
-    const [inactivityTimer, setInactivityTimer] = useState(null);
 
     useEffect(() => {
         const savedCart = localStorage.getItem('cart');
@@ -26,36 +25,7 @@ export const CartProvider = ({ children }) => {
         // resetInactivityTimer();
     }, [cart]);
 
-    const resetInactivityTimer = () => {
-        clearTimeout(inactivityTimer);
     
-        if (cart.length === 0) {
-            // If the cart is empty, do not set any timers
-            return;
-        }
-    
-        // First timer for the abandoned cart reminder after 30 minutes
-        const reminderTimer = setTimeout(() => {
-            if (cart.length > 0) { // Check again as the cart might have changed
-                remindAbandonedCart();
-    
-                // Second timer to clear the cart after an additional 11.5 hours
-                const clearCartTimer = setTimeout(() => {
-                    if (cart.length > 0) { // Final check before clearing the cart
-                        emptyCart();
-                    }
-                }, 1000 * 60 * 1); 
-    
-                setInactivityTimer(clearCartTimer);
-            }
-        }, 1000 * 60 * .5);
-    
-        setInactivityTimer(reminderTimer);
-    };
-    const remindAbandonedCart = () => {
-        // Implement reminder logic here (e.g., send email or show notification)
-        console.log('Reminder: You have items in your cart!');
-    };
 
     const addToCart = (product, variant) => {
         console.log('added to cart', product, variant);

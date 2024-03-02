@@ -49,5 +49,26 @@ router.get('/api/products/store/:storeId', async (req, res) => {
     }
 });
 
+router.get('/api/products/:productId', async (req, res) => {
+    console.log('in prod id');
+    try {
+        const { productId } = req.params; // Extracting productId from the URL parameters
+        console.log(productId);
+        if (!productId) {
+            return res.status(400).send({ message: "Product ID is required" });
+        }
+
+        const product = await Products.findById(productId); // Fetching the product by its ID
+        if (!product) {
+            return res.status(404).send({ message: "Product not found" }); // Product with the given ID doesn't exist
+        }
+        res.json(product); // Sending the found product as the response
+    } catch (error) {
+        console.error('Error fetching product by ID:', error);
+        res.status(500).json({ message: 'Failed to fetch product', error: error.toString() });
+    }
+});
+
+
 
 export default router;

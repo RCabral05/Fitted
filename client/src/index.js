@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 // import SignUp from "./pages/SignUpPage";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from './context/CartContext';
+import { ProductsProvider } from './context/ProductsContext';
 import DiscordConnectPage from "./pages/DiscordPages/DiscordConnectPage";
 import SuccessPage from "./pages/DiscordPages/SuccessPage";
 import ServerUsersPage from "./pages/DiscordPages/ServerUsersPage";
@@ -16,6 +17,7 @@ import BrandDashboardPage from "./pages/BrandDashboard/BrandDashboardPage";
 import BrandProductsPage from "./pages/BrandDashboard/BrandProductsPage";
 import ProductPage from "./pages/WebsitePages/ProductPage";
 import AllStoresPage from "./pages/WebsitePages/AllStoresPage";
+import ProductDetailsPage from "./pages/WebsitePages/ProductDetailsPage";
 
 // Create root element
 const rootElement = document.getElementById("root");
@@ -25,20 +27,23 @@ root.render(
   <AuthProvider>
     <BrowserRouter>
       <CartProvider>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route index element={<ProductPage />} />
-            {/* <Route path="/SignUp" element={<SignUp />} /> */}
-            <Route path="/Connect-Discord" element={<DiscordConnectPage />}/>
-            <Route path="/success" element={<SuccessPage />} />
-            <Route path="/server-users" element={<ServerUsersPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/create-store" element={<CreateStorePage />} />
-            <Route path="/all-stores" element={<AllStoresPage />} />
-            <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
-            <Route path="*" element={<p>Route not found</p>} />
-          </Route>
-        </Routes>
+        <ProductsProvider>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route index element={<ProductPage />} />
+              {/* <Route path="/SignUp" element={<SignUp />} /> */}
+              <Route path="/Connect-Discord" element={<DiscordConnectPage />}/>
+              <Route path="/success" element={<SuccessPage />} />
+              <Route path="/server-users" element={<ServerUsersPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/create-store" element={<CreateStorePage />} />
+              <Route path="/product/:productId" element={<ProductDetailsPage />} />
+              <Route path="/all-stores" element={<AllStoresPage />} />
+              <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
+              <Route path="*" element={<p>Route not found</p>} />
+            </Route>
+          </Routes>
+        </ProductsProvider>
       </CartProvider>
     </BrowserRouter>
   </AuthProvider>

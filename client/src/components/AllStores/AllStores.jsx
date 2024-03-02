@@ -1,23 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-// import './styles.css';
+import React, { useContext } from 'react';
+// Removed axios import since we are now using context
+// import './styles.css'; // Uncomment if you are using CSS
+import { useProducts } from '../../context/ProductsContext'; // Adjust the import path as needed
 
 export const AllStores = () => {
-  const [stores, setStores] = useState([]);
-  
-  useEffect(() => {
-
-    const fetchStores = async () => {
-      try {
-        const storesResponse = await axios.get(`${process.env.REACT_APP_BASE_URL}api/stores`);
-        setStores(storesResponse.data);
-      } catch (error) {
-        console.error('Error fetching stores:', error.response?.data || error.message);
-      }
-    };
-
-    fetchStores();
-  }, []);
+  const { stores } = useProducts(); // Use the stores from the context
 
   console.log('Stores:', stores);
 

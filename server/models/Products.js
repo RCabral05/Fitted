@@ -16,7 +16,8 @@ const ProductSchema = new Schema({
     enum: ['available', 'unavailable', 'discontinued'] // Example statuses
   },
   images: [{
-    type: String // Assuming URLs to the images
+    type: String, // Assuming URLs to the images
+    required: true
   }],
   price: {
     type: Number,

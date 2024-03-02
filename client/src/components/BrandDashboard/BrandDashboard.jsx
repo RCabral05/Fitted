@@ -1,53 +1,36 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BrandDetails } from './BrandDetails';
-import { BrandAddProducts } from './BrandAddProducts';
-import { AuthContext } from '../../context/AuthContext';
 import { BrandProducts } from './BrandProducts';
-import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
+import { useProducts } from '../../context/ProductsContext';
 
 export function BrandDashboard() {
   const { user } = useContext(AuthContext);
-  const [store, setStore] = useState([]);
-  const [products, setProducts] = useState([]);
+  const { products, stores, fetchProductsForStore } = useProducts();
+  const [currentStore, setCurrentStore] = useState(null);
   const [activeView, setActiveView] = useState('details');
+
+  // Fetch the store corresponding to the current user
   useEffect(() => {
-    const fetchStore = async () => {
-      if (user && user.id) {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/stores/${user.id}`);
-          setStore(response.data);
-        } catch (error) {
-          console.error('Error fetching stores:', error.response?.data || error.message);
-        }
+    if (user && stores.length > 0) {
+      const storeMatch = stores.find(store => store.discordId === user.id);
+      setCurrentStore(storeMatch);
+      if (storeMatch) {
+        fetchProductsForStore(storeMatch._id);
       }
-    };
-
-    fetchStore();
-  }, [user]);
-
-  const fetchProductsForStore = async (storeId) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/products/store/${storeId}`);
-      setProducts(response.data);
-    } catch (error) {
-      console.error('Error fetching products:', error.response?.data || error.message);
     }
-  };
+  }, [user, stores, fetchProductsForStore]);
 
-  useEffect(() => {
-    if (store.length > 0) {
-      // Automatically fetch products for the first store as an example
-      fetchProductsForStore(store[0]._id);
-    }
-  }, [store]);
+  const setActiveViewToDetails = () => setActiveView('details');
+  const setActiveViewToProducts = () => setActiveView('products');
 
   return (
     <div>
-      <button onClick={() => setActiveView('details')}>Details</button>
-      <button onClick={() => setActiveView('products')}>Products</button>
+      <button onClick={setActiveViewToDetails}>Details</button>
+      <button onClick={setActiveViewToProducts}>Products</button>
 
-      {activeView === 'details' && <BrandDetails store={store} />}
-      {activeView === 'products' && <BrandProducts store={store} products={products}/>}
+      {activeView === 'details' && <BrandDetails store={currentStore} />}
+      {activeView === 'products' && <BrandProducts products={products} />}
     </div>
   );
 }

@@ -1,23 +1,16 @@
 import React from 'react';
 
-export function BrandDetails(store) {
-  console.log(store.store[0]);
-  const allStores = store.store;
-
+export function BrandDetails({ store }) {
   return (
     <div>
-      {allStores.length > 0 ? (
-        <ul>
-          {allStores.map((store, index) => (
-            <li key={index}>
-              <h2>{store.storeName}</h2>
-              <p>Email: {store.storeEmail}</p>
-              <p>Number: {store.storeNumber}</p>
-            </li>
-          ))}
-        </ul>
+      {store ? (
+        <>
+          <h2>{store.storeName}</h2>
+          <p>Email: {store.storeEmail}</p>
+          <p>Number: {store.storeNumber}</p>
+        </>
       ) : (
-        <p>No stores found.</p>
+        <p>No store details available.</p>
       )}
     </div>
   );
