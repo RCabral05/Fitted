@@ -33,6 +33,7 @@ router.get('/api/products', async (req, res) => {
 router.get('/api/products/store/:storeId', async (req, res) => {
     try {
         const { storeId } = req.params;
+        // console.log('sid', storeId);
         if (!storeId) {
             return res.status(400).send({ message: "Store ID is required" });
         }
