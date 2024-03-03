@@ -37,7 +37,7 @@ export const ProductsProvider = ({ children }) => {
 
     const addProduct = async (productData) => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/products`, productData);
+            const response = await axios.post(`${process.env.REACT_APP_BASE_URL}add-product`, productData);
             setProducts([...products, response.data]);
         } catch (error) {
             console.error('Error adding product:', error);
