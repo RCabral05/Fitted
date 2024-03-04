@@ -20,6 +20,7 @@ import BrandProductsPage from "./pages/BrandDashboard/BrandProductsPage";
 import ProductPage from "./pages/WebsitePages/ProductPage";
 import AllStoresPage from "./pages/WebsitePages/AllStoresPage";
 import ProductDetailsPage from "./pages/WebsitePages/ProductDetailsPage";
+import CartPage from "./pages/WebsitePages/CartPage";
 
 // Create root element
 const rootElement = document.getElementById("root");
@@ -43,6 +44,7 @@ root.render(
                   <Route path="/create-store" element={<CreateStorePage />} />
                   <Route path="/product/:productId" element={<ProductDetailsPage />} />
                   <Route path="/all-stores" element={<AllStoresPage />} />
+                  <Route path="/Cart" element={<CartPage />} />
                   <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
                   <Route path="*" element={<p>Route not found</p>} />
                 </Route>

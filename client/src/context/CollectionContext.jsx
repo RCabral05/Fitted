@@ -8,7 +8,6 @@ export const useCollections = () => useContext(CollectionContext);
 export const CollectionProvider = ({ children }) => {
     const [collections, setCollections] = useState([]);
 
-    // Memoizing the function using useCallback
     const createCollection = useCallback(async (collectionData) => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/collections`, collectionData, {
@@ -20,12 +19,19 @@ export const CollectionProvider = ({ children }) => {
         } catch (error) {
             console.error('Error creating collection:', error);
         }
-    }, []); // No dependencies
+    }, []);
 
-    // Include any additional functions here, memoized with useCallback if they will be used as dependencies or passed to children
+    const fetchCollections = useCallback(async (storeId) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/collections/${storeId}`);
+            setCollections(response.data.collections);
+        } catch (error) {
+            console.error('Error fetching collections:', error);
+        }
+    }, []);
 
     return (
-        <CollectionContext.Provider value={{ collections, createCollection }}>
+        <CollectionContext.Provider value={{ collections, createCollection, fetchCollections }}>
             {children}
         </CollectionContext.Provider>
     );

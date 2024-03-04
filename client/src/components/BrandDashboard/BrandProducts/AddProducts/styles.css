@@ -1,0 +1,82 @@
+/* styles.css */
+.brand-prod {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.brand-prod form {
+    display: grid;
+    grid-gap: 15px;
+}
+
+.brand-prod label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.brand-prod input[type="text"],
+.brand-prod input[type="number"],
+.brand-prod textarea,
+.brand-prod select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* So padding doesn't affect width */
+}
+
+.brand-prod textarea {
+    min-height: 100px;
+}
+
+.brand-prod input[type="file"] {
+    border: none;
+    margin-bottom: 10px;
+}
+
+.brand-prod button {
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.brand-prod button:hover {
+    background-color: #45a049;
+}
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.image-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .brand-prod {
+        width: 90%;
+        padding: 10px;
+    }
+}

@@ -1,0 +1,94 @@
+.Cart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 93vh; /* Full viewport height */
+    box-sizing: border-box; /* Include padding in the height calculation */
+    margin-top: 7vh;
+    /* border: 1px solid red; */
+}
+.Cart-container h1 {
+    /* border: 1px solid red; */
+    margin: 0%;
+    margin-bottom: 10px;
+    color: white;
+    font-size: 30px;
+    width: 90%;
+}
+.Cart-items-container {
+    /* border: 1px solid red; */
+    height: 80vh;
+    overflow: auto;
+    width: 90%;
+}
+.Cart-items-container::-webkit-scrollbar {
+    display: none;
+}
+
+.Cart-empty-message {
+    text-align: center;
+    color: white;
+    margin-top: 20px; /* Give some space from the top */
+}
+
+.Cart-footer {
+    padding-top: 5px;
+    padding-bottom: 3px;
+    padding-left: 5%;
+    padding-right: 5%;
+    height: 6vh;
+    background: none;
+    color: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Shadow at the top */
+    /* border: 1px solid red; */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    border-top: 1px solid rgb(49, 180, 255);
+}
+
+.Cart-subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Cart-subtotal-text {
+    font-weight: bold;
+}
+
+.Cart-actions {
+    display: flex;
+    flex-direction: row;
+}
+
+.Cart-empty-button,
+.Cart-checkout-button {
+    border: none;
+    padding: 10px 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px; /* Slightly rounded corners */
+    font-weight: bold;
+}
+
+.Cart-empty-button {
+    background-color: #c2c0c0;
+    color: #000;
+}
+
+.Cart-checkout-button {
+    background-color: #2e59d1;
+    color: #fff;
+}
+
+.Cart-empty-button:hover {
+    background-color: #e6e6e6;
+}
+
+.Cart-checkout-button:hover {
+    background-color: rgb(49, 180, 255);
+}

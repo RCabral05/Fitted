@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css';
 import { useProducts } from '../../../../context/ProductsContext'; // Adjust the import path as needed
+import { useCollections } from '../../../../context/CollectionContext';
 
 export function BrandAddProducts({ initialData, store }) {
-    const { addProduct } = useProducts(); // Destructure the addProduct function from the context
+    const { addProduct } = useProducts();
+    const { collections, fetchCollections } = useCollections();
     const [product, setProduct] = useState(initialData || {
         title: '',
         description: '',
@@ -13,10 +15,14 @@ export function BrandAddProducts({ initialData, store }) {
         sku: '',
         quantity: 0,
         vendor: '',
-        collections: '',
+        collection: '',
         category: '',
         tags: []
     });
+
+    useEffect(() => {
+        fetchCollections(store._id); // Fetch collections when the component mounts or the store changes
+    }, [store._id, fetchCollections]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -25,21 +31,30 @@ export function BrandAddProducts({ initialData, store }) {
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
-        const urls = files.map(file => URL.createObjectURL(file));
-        setProduct({ ...product, images: [...product.images, ...urls] });
+        const newImageUrls = files.map(file => URL.createObjectURL(file));
+        setProduct(prevProduct => ({
+            ...prevProduct,
+            images: [...prevProduct.images, ...newImageUrls]
+        }));
+    };
+
+    const removeImage = (removeIndex) => {
+        setProduct(prevProduct => ({
+            ...prevProduct,
+            images: prevProduct.images.filter((_, index) => index !== removeIndex)
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const productWithStoreId = {
             ...product,
-            storeId: store._id // Ensuring the store ID is attached to the product
+            storeId: store._id
         };
 
         try {
-            await addProduct(productWithStoreId); // Using the addProduct from context
+            await addProduct(productWithStoreId);
             console.log('Product added successfully');
-            // You might want to reset the form or give feedback to the user here
         } catch (error) {
             console.error("Error adding product:", error);
         }
@@ -47,44 +62,73 @@ export function BrandAddProducts({ initialData, store }) {
 
   return (
     <div className="brand-prod">
-      <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <label>Title:
-              <input type="text" name="title" value={product.title} onChange={handleChange} required />
+                <input type="text" name="title" value={product.title} onChange={handleChange} required />
             </label>
             <label>Description:
-              <textarea name="description" value={product.description} onChange={handleChange} required />
+                <textarea name="description" value={product.description} onChange={handleChange} required />
             </label>
             <label>Status:
-              <select name="status" value={product.status} onChange={handleChange} required>
-                <option value="available">Available</option>
-                <option value="unavailable">Unavailable</option>
-                <option value="discontinued">Discontinued</option>
-              </select>
+                <select name="status" value={product.status} onChange={handleChange} required>
+                    <option value="available">Available</option>
+                    <option value="unavailable">Unavailable</option>
+                    <option value="discontinued">Discontinued</option>
+                </select>
             </label>
-            <label>Images:
-              <input type="file" multiple onChange={handleFileChange} />
-            </label>
+            <label>Images:</label>
+                <div className="image-upload-container">
+                    {product.images.map((image, index) => (
+                        <div key={index} className="image-preview">
+                            <img src={image} alt="Preview" />
+                            <button type="button" onClick={() => removeImage(index)}>Remove</button>
+                        </div>
+                    ))}
+                    <input type="file" multiple onChange={handleFileChange} />
+                </div>
             <label>Price:
-              <input type="number" name="price" value={product.price} onChange={handleChange} required />
+                <input type="number" name="price" value={product.price} onChange={handleChange} required />
             </label>
             <label>Sku:
-              <input type="number" name="sku" value={product.sku} onChange={handleChange} required />
+                <input type="number" name="sku" value={product.sku} onChange={handleChange} required />
             </label>
             <label>Quantity:
-              <input type="number" name="quantity" value={product.quantity} onChange={handleChange} />
+                <input type="number" name="quantity" value={product.quantity} onChange={handleChange} />
             </label>
             <label>Vendor:
-              <input type="text" name="vendor" value={product.vendor} onChange={handleChange} required />
+                <input type="text" name="vendor" value={product.vendor} onChange={handleChange} required />
             </label>
             <label>Collection:
-              <input type="text" name="collections" value={product.collections} onChange={handleChange} />
-            </label>
-            <label>Category:
-              <input type="text" name="category" value={product.category} onChange={handleChange} required />
-            </label>
+                    <select 
+                        name="collection" 
+                        value={product.collection} 
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select a Collection</option>
+                        {collections.map((collection, index) => (
+                            <option key={index} value={collection._id}>
+                                {collection.collectionName}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+              <label>Category:
+                  <select 
+                      name="category" 
+                      value={product.category} 
+                      onChange={handleChange} 
+                      required
+                  >
+                      <option value="">Select a Category</option>
+                      <option value="mens">Men's</option>
+                      <option value="womens">Women's</option>
+                      <option value="kids">Kids</option>
+                  </select>
+              </label>
             {/* Tags and variants input fields */}
             <button type="submit">Submit</button>
-      </form>
+        </form>
     </div>
     
   );

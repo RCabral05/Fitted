@@ -27,26 +27,27 @@ export const CartProvider = ({ children }) => {
 
     
 
-    const addToCart = (product, variant) => {
-        console.log('added to cart', product, variant);
+    const addToCart = (product) => {
+        console.log('added to cart', product);
         setCart(currentCart => {
-            const productWithVariant = { ...product, selectedVariant: variant };
-            const existingProductIndex = currentCart.findIndex(item => 
-                item.id === productWithVariant.id && item.selectedVariant.id === variant.id
-            );
+            // Find if the product is already in the cart based on its unique ID
+            const existingProductIndex = currentCart.findIndex(item => item._id === product._id);
     
             let newCart;
             if (existingProductIndex >= 0) {
+                // Product exists, increment the quantity
                 newCart = [...currentCart];
                 newCart[existingProductIndex].quantity += 1;
             } else {
+                // Product doesn't exist, add to the cart with a quantity of 1
                 const uniqueId = new Date().getTime(); // Use current timestamp for uniqueness
-                newCart = [...currentCart, { ...productWithVariant, quantity: 1, cartItemId: uniqueId }];
+                newCart = [...currentCart, { ...product, quantity: 1, cartItemId: uniqueId }];
             }
     
             return newCart;
         });
     };
+    
 
     useEffect(() => {
         // Log each cartItemId whenever the cart changes

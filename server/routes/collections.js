@@ -47,5 +47,20 @@ router.post('/api/collections', upload.single('collectionImage'), async (req, re
     }
 });
 
+router.get('/api/collections/:storeId', async (req, res) => {
+    try {
+        const { storeId } = req.params;
+        if (!storeId) {
+            return res.status(400).json({ message: "Store ID is required" });
+        }
+
+        const collections = await Collection.find({ storeId });
+        res.status(200).json({ collections });
+    } catch (error) {
+        console.error('Failed to fetch collections:', error);
+        res.status(500).json({ message: "Failed to fetch collections", error: error.toString() });
+    }
+});
+
 
 export default router;

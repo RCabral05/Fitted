@@ -13,6 +13,7 @@ export const Navbar = () => {
         <a href="/create-store">Create Store</a>
         <a href="/brand-dashboard">Brand Dash</a>
         <a href="/all-stores">All Stores</a>
+        <a href="/cart">Cart</a>
     </div>
   );
 };

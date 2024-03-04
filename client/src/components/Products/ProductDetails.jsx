@@ -2,12 +2,14 @@ import React, { useEffect, useState, useContext } from 'react';
 // import './styles.css';
 import { useProducts } from '../../context/ProductsContext'; // Adjust this import as needed
 import { useParams } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 
 export const ProductDetails = () => {
     const { productId } = useParams();
     const { fetchProductById } = useProducts(); // Use the newly created function
     const [product, setProduct] = useState(null);
     const [productNotFound, setProductNotFound] = useState(false);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         const loadProduct = async () => {
@@ -28,7 +30,10 @@ export const ProductDetails = () => {
     return (
         <div className="product-details-container">
             {product ? (
-                <li>{product.title}</li>
+                <div>
+                    <li>{product.title}</li>
+                    <button id='addCart' onClick={() => addToCart(product)}>Add to Cart</button>
+                </div>
             ) : (
                 productNotFound ? <p>Product not found.</p> : <p>Loading product...</p>
             )}
