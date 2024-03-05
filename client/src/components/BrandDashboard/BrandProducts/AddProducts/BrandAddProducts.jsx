@@ -10,7 +10,8 @@ export function BrandAddProducts({ initialData, store }) {
         title: '',
         description: '',
         status: 'available',
-        images: [],
+        imageFiles: [], // To store the actual File objects
+        imagePreviews: [], // To store URLs for previewing images
         price: '',
         sku: '',
         quantity: 0,
@@ -21,7 +22,7 @@ export function BrandAddProducts({ initialData, store }) {
     });
 
     useEffect(() => {
-        fetchCollections(store._id); // Fetch collections when the component mounts or the store changes
+        fetchCollections(store._id);
     }, [store._id, fetchCollections]);
 
     const handleChange = (e) => {
@@ -31,35 +32,62 @@ export function BrandAddProducts({ initialData, store }) {
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
-        const newImageUrls = files.map(file => URL.createObjectURL(file));
+        const newImageFiles = [...product.imageFiles, ...files];
+        const newImagePreviews = newImageFiles.map(file => URL.createObjectURL(file));
+
         setProduct(prevProduct => ({
             ...prevProduct,
-            images: [...prevProduct.images, ...newImageUrls]
+            imageFiles: newImageFiles,
+            imagePreviews: newImagePreviews
         }));
     };
 
     const removeImage = (removeIndex) => {
-        setProduct(prevProduct => ({
-            ...prevProduct,
-            images: prevProduct.images.filter((_, index) => index !== removeIndex)
-        }));
+        setProduct(prevProduct => {
+            const newImageFiles = prevProduct.imageFiles.filter((_, index) => index !== removeIndex);
+            const newImagePreviews = newImageFiles.map(file => URL.createObjectURL(file));
+
+            return {
+                ...prevProduct,
+                imageFiles: newImageFiles,
+                imagePreviews: newImagePreviews
+            };
+        });
     };
+
+    useEffect(() => {
+        // Clean up the blob URLs to avoid memory leaks
+        return () => {
+            product.imagePreviews.forEach(url => URL.revokeObjectURL(url));
+        };
+    }, [product.imagePreviews]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const productWithStoreId = {
-            ...product,
-            storeId: store._id
-        };
+    
+        const formData = new FormData();
+        formData.append('title', product.title);
+        formData.append('description', product.description);
+        formData.append('status', product.status);
+        formData.append('price', product.price);
+        formData.append('sku', product.sku);
+        formData.append('quantity', product.quantity.toString());
+        formData.append('vendor', product.vendor);
+        formData.append('collection', product.collection);
+        formData.append('category', product.category);
+        formData.append('storeId', store._id);
+
+        product.imageFiles.forEach(file => {
+            formData.append('images', file);
+        });
 
         try {
-            await addProduct(productWithStoreId);
+            await addProduct(formData);
             console.log('Product added successfully');
         } catch (error) {
             console.error("Error adding product:", error);
         }
     };
-
   return (
     <div className="brand-prod">
         <form onSubmit={handleSubmit}>
@@ -78,9 +106,9 @@ export function BrandAddProducts({ initialData, store }) {
             </label>
             <label>Images:</label>
                 <div className="image-upload-container">
-                    {product.images.map((image, index) => (
+                    {product.imagePreviews.map((imageUrl, index) => (
                         <div key={index} className="image-preview">
-                            <img src={image} alt="Preview" />
+                            <img src={imageUrl} alt="Preview" />
                             <button type="button" onClick={() => removeImage(index)}>Remove</button>
                         </div>
                     ))}

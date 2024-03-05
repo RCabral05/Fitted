@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { useProducts } from '../../context/ProductsContext'; // Import the context you created
-import { ProductList } from './ProductList';
+import { ProductList } from './ProductList/ProductList';
 // import './styles.css';
 
 export const Products = () => {

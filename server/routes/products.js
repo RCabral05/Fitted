@@ -3,22 +3,54 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from "dotenv";
 import axios from 'axios';
 import Products from "../models/Products.js";
+import { multerUpload, uploadImage } from '../services/aws/bucket.js';
+
+
 
 dotenv.config({ path: "./config.env" });
 
 const router = express.Router();
 
-router.post("/add-product", async (req, res) => {
-    console.log('Request body:', req.body);
+router.post("/api/add-product", multerUpload.array('images', 5), async (req, res) => {
     try {
-        const product = new Products(req.body);
+        let uploadedImages = [];
+        const files = req.files;
+        console.log(files);
+        // Ensure there are files to upload
+        if (files.length) {
+            const uploadPromises = files.map(file => {
+                return new Promise((resolve, reject) => {
+                    uploadImage(file, (error, data) => {
+                        if (error) {
+                            console.log('Upload error for file:', file.originalname, error);
+                            reject(error);
+                        } else {
+                            resolve(data.Location);
+                        }
+                    });
+                });
+            });
+
+            // Wait for all uploads to complete
+            uploadedImages = await Promise.all(uploadPromises).catch(error => {
+                throw new Error(`Failed to upload an image to S3: ${error}`);
+            });
+        }
+
+        const productData = {
+            ...req.body,
+            images: uploadedImages, // includes the S3 URLs
+        };
+
+        const product = new Products(productData);
         await product.save();
         res.status(201).send({ message: "Product added successfully", product });
     } catch (error) {
         console.error('Error saving product:', error);
-        res.status(400).send(error);
+        res.status(500).send({ message: "Failed to upload product", error: error.toString() });
     }
 });
+
 
 router.get('/api/products', async (req, res) => {
     try {
