@@ -31,14 +31,18 @@ export const ProductsProvider = ({ children }) => {
     }, []); // No dependencies, assuming REACT_APP_BASE_URL doesn't change
 
     const addProduct = useCallback(async (productData) => {
-        console.log('pd', productData);
-        try {
+        for (let [key, value] of productData.entries()) {
+            console.log(key, value);
+        }
+          try {
+
             const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/add-product`, productData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
             });
             setProducts(currentProducts => [...currentProducts, response.data.product]); // Assuming the response includes the product
+
         } catch (error) {
             console.error('Error adding product:', error);
             throw error; // It's usually a good practice to rethrow the error for further handling

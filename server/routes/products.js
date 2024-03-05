@@ -2,52 +2,89 @@ import express from "express";
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from "dotenv";
 import axios from 'axios';
-import Products from "../models/Products.js";
+import Models from "../models/Products.js";
+
+
 import { multerUpload, uploadImage } from '../services/aws/bucket.js';
 
 
+const { Products, Variants } = Models;
 
 dotenv.config({ path: "./config.env" });
 
 const router = express.Router();
 
-router.post("/api/add-product", multerUpload.array('images', 5), async (req, res) => {
+
+router.post("/api/add-product", multerUpload, async (req, res) => {
+    const images = req.files['images'] || [];
+    const variantImages = req.files['variantImages'] || [];
+
     try {
         let uploadedImages = [];
-        const files = req.files;
-        console.log(files);
-        // Ensure there are files to upload
-        if (files.length) {
-            const uploadPromises = files.map(file => {
+        let uploadedVariantImages = [];
+
+        // Upload handling for regular images
+        if (images.length > 0) {
+            uploadedImages = await Promise.all(images.map(file => {
                 return new Promise((resolve, reject) => {
                     uploadImage(file, (error, data) => {
-                        if (error) {
-                            console.log('Upload error for file:', file.originalname, error);
-                            reject(error);
-                        } else {
-                            resolve(data.Location);
-                        }
-                    });
+                        if (error) reject(error);
+                        else resolve(data.Location);
+                    }, false);
                 });
-            });
-
-            // Wait for all uploads to complete
-            uploadedImages = await Promise.all(uploadPromises).catch(error => {
-                throw new Error(`Failed to upload an image to S3: ${error}`);
-            });
+            }));
         }
 
-        const productData = {
-            ...req.body,
-            images: uploadedImages, // includes the S3 URLs
-        };
+        // Upload handling for variant images
+        if (variantImages.length > 0) {
+            uploadedVariantImages = await Promise.all(variantImages.map(file => {
+                return new Promise((resolve, reject) => {
+                    uploadImage(file, (error, data) => {
+                        if (error) reject(error);
+                        else resolve(data.Location);
+                    }, true);
+                });
+            }));
+            console.log(uploadedVariantImages);
+        }
+        
 
-        const product = new Products(productData);
-        await product.save();
-        res.status(201).send({ message: "Product added successfully", product });
+        // Extract product data and variants from req.body
+        let { variants, ...productData } = req.body;
+        productData.images = uploadedImages;
+
+        // Create the product instance
+        const newProduct = new Products({ ...productData, storeId: req.body.storeId });
+
+        // Preparing variant objects with their uploaded images
+        console.log('var', variants);
+
+        let updatedVariants = variants.map((variant, index) => ({
+            ...variant,
+            productId: newProduct._id,
+            variantImage: uploadedVariantImages[index]
+        }));
+
+        // Save the product
+        const savedProduct = await newProduct.save();
+        console.log('s', savedProduct);
+
+        // Save variants if they exist
+        if (updatedVariants.length > 0) {
+            const savedVariants = await Promise.all(updatedVariants.map(async variant => {
+                const newVariant = new Variants(variant);
+                return newVariant.save();
+            }));
+            console.log('sv', savedVariants);
+
+            savedProduct.variant = savedVariants.map(variant => variant._id);
+            await savedProduct.save();
+        }
+
+        res.status(201).send({ message: "Product and variants added successfully", product: savedProduct });
     } catch (error) {
-        console.error('Error saving product:', error);
-        res.status(500).send({ message: "Failed to upload product", error: error.toString() });
+        console.error('Error saving product and variants:', error);
+        res.status(500).send({ message: "Failed to upload product and variants", error: error.toString() });
     }
 });
 

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useProducts } from '../../context/ProductsContext'; // Import the context you created
 import { ProductList } from './ProductList/ProductList';
-// import './styles.css';
+import './styles.css';
 
 export const Products = () => {
   // Use useContext hook to access the context values and functions

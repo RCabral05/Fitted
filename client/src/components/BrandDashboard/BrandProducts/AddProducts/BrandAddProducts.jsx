@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
-import { useProducts } from '../../../../context/ProductsContext'; // Adjust the import path as needed
+import { useProducts } from '../../../../context/ProductsContext';
 import { useCollections } from '../../../../context/CollectionContext';
 
 export function BrandAddProducts({ initialData, store }) {
@@ -10,15 +10,16 @@ export function BrandAddProducts({ initialData, store }) {
         title: '',
         description: '',
         status: 'available',
-        imageFiles: [], // To store the actual File objects
-        imagePreviews: [], // To store URLs for previewing images
+        imageFiles: [],
+        imagePreviews: [],
         price: '',
         sku: '',
         quantity: 0,
         vendor: '',
         collection: '',
         category: '',
-        tags: []
+        tags: [],
+        variants: []
     });
 
     useEffect(() => {
@@ -56,38 +57,126 @@ export function BrandAddProducts({ initialData, store }) {
     };
 
     useEffect(() => {
-        // Clean up the blob URLs to avoid memory leaks
         return () => {
             product.imagePreviews.forEach(url => URL.revokeObjectURL(url));
         };
     }, [product.imagePreviews]);
 
+    const handleVariantFileChange = (index, event) => {
+        if (event.target && event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            if (file instanceof File) {
+                const updatedVariants = [...product.variants];
+                updatedVariants[index].variantImageFile = file;
+                updatedVariants[index].variantImagePreview = URL.createObjectURL(file);
+                setProduct({ ...product, variants: updatedVariants });
+            } else {
+                console.error("The file is not a valid type");
+            }
+        } else {
+            console.error("No file selected or the file input is cleared");
+        }
+    };
+
+    const handleVariantInputChange = (index, event) => {
+        const { name, value } = event.target;
+        const updatedVariants = [...product.variants];
+        updatedVariants[index][name] = value;
+        setProduct({ ...product, variants: updatedVariants });
+    };
+
+    const handleVariantValueChange = (variantIndex, valueIndex, value) => {
+        const updatedVariants = [...product.variants];
+        updatedVariants[variantIndex].variantValues[valueIndex] = value;
+        setProduct({ ...product, variants: updatedVariants });
+    };
+
+    const addVariantValue = (variantIndex) => {
+        const updatedVariants = [...product.variants];
+        if (!updatedVariants[variantIndex].variantValues) {
+            updatedVariants[variantIndex].variantValues = [];
+        }
+        updatedVariants[variantIndex].variantValues.push('');
+        setProduct({ ...product, variants: updatedVariants });
+    };
+
+    const removeVariantValue = (variantIndex, valueIndex) => {
+        const updatedVariants = [...product.variants];
+        updatedVariants[variantIndex].variantValues.splice(valueIndex, 1);
+        setProduct({ ...product, variants: updatedVariants });
+    };
+
+    const addVariant = () => {
+        setProduct(prevProduct => ({
+            ...prevProduct,
+            variants: [...prevProduct.variants, {
+                variantImage: [],
+                variantPrice: '',
+                variantCostPerItem: '',
+                variantSku: '',
+                variantQuantity: '',
+                variantName: '',
+                variantValues: []
+            }]
+        }));
+    };
+
+    const removeVariant = (index) => {
+        setProduct(prevProduct => ({
+            ...prevProduct,
+            variants: prevProduct.variants.filter((_, idx) => idx !== index)
+        }));
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+        console.log(product);
         const formData = new FormData();
         formData.append('title', product.title);
         formData.append('description', product.description);
         formData.append('status', product.status);
         formData.append('price', product.price);
         formData.append('sku', product.sku);
-        formData.append('quantity', product.quantity.toString());
+        formData.append('quantity', product.quantity);
         formData.append('vendor', product.vendor);
         formData.append('collection', product.collection);
         formData.append('category', product.category);
         formData.append('storeId', store._id);
+        product.tags.forEach(tag => formData.append('tags', tag));
+        product.imageFiles.forEach(file => formData.append('images', file));
+    
+        // Append variant details
+        product.variants.forEach((variant, index) => {
+            // Append each property of the variant except for the image file
+            Object.keys(variant).forEach(key => {
+                // console.log('key', key);
+                if (key !== 'variantImageFile' && key !== 'variantImagePreview') {
+                    formData.append(`variants[${index}][${key}]`, variant[key]);
+                }
+            });
+    
+            // Append the variant image file if it exists
+            if (variant.variantImageFile) {
+                formData.append(`variantImages`, variant.variantImageFile); // Append the file to the form data
+                // You might need to adjust this logic depending on how you handle the file uploads
+                // Assuming you are calling the uploadImage function directly:
+                // uploadImage(variant.variantImageFile, yourUploadCompleteCallback, true); // Pass true for isVariantImage
+            }
 
-        product.imageFiles.forEach(file => {
-            formData.append('images', file);
         });
-
+    
         try {
+            console.log('trying');
             await addProduct(formData);
             console.log('Product added successfully');
         } catch (error) {
             console.error("Error adding product:", error);
         }
     };
+    
+    
+    
   return (
     <div className="brand-prod">
         <form onSubmit={handleSubmit}>
@@ -155,6 +244,91 @@ export function BrandAddProducts({ initialData, store }) {
                   </select>
               </label>
             {/* Tags and variants input fields */}
+            {product.variants.map((variant, index) => (
+                <div key={index} className="variant-section">
+                    <label>Variant Name:
+                        <input
+                            type="text"
+                            name="variantName"
+                            value={variant.variantName}
+                            onChange={(e) => handleVariantInputChange(index, e)}
+                        />
+                    </label>
+                    
+                    <label>Variant Price:
+                        <input
+                            type="number"
+                            name="variantPrice"
+                            value={variant.variantPrice}
+                            onChange={(e) => handleVariantInputChange(index, e)}
+                        />
+                    </label>
+                    <label>Variant Compare At Price:
+                        <input
+                            type="number"
+                            name="variantCompareAtPrice"
+                            value={variant.variantCompareAtPrice}
+                            onChange={(e) => handleVariantInputChange(index, e)}
+                        />
+                    </label>
+                    <label>Variant Cost Per Item:
+                        <input
+                            type="number"
+                            name="variantCostPerItem"
+                            value={variant.variantCostPerItem}
+                            onChange={(e) => handleVariantInputChange(index, e)}
+                        />
+                    </label>
+                    <label>Variant SKU:
+                        <input
+                            type="text"
+                            name="variantSku"
+                            value={variant.variantSku}
+                            onChange={(e) => handleVariantInputChange(index, e)}
+                        />
+                    </label>
+                    <label>Variant Quantity:
+                        <input
+                            type="number"
+                            name="variantQuantity"
+                            value={variant.variantQuantity}
+                            onChange={(e) => handleVariantInputChange(index, e)}
+                        />
+                    </label>
+                    <label>Variant Image:
+                        <input
+                            type="file"
+                            onChange={(e) => handleVariantFileChange(index, e)}
+                        />
+                        {/* {variant.variantImagePreview && (
+                            <img src={variant.variantImagePreview} alt="Variant Preview" style={{ width: '100px', height: 'auto' }} />
+                        )} */}
+                    </label>
+
+                    {/* Include input fields for variantValues if necessary */}
+                   {product.variants.map((variant, index) => (
+                    <div key={index} className="variant-section">
+                        {/* Existing variant inputs */}
+                        <label>Variant Values:</label>
+                        {variant.variantValues.map((value, vIndex) => (
+                            <div key={vIndex}>
+                                <input
+                                    type="text"
+                                    value={value}
+                                    onChange={(e) => handleVariantValueChange(index, vIndex, e.target.value)}
+                                />
+                                <button type="button" onClick={() => removeVariantValue(index, vIndex)}>Remove Value</button>
+                            </div>
+                        ))}
+                        <button type="button" onClick={() => addVariantValue(index)}>Add Value</button>
+                        <button type="button" onClick={() => removeVariant(index)}>Remove Variant</button>
+                    </div>
+                ))}
+                </div>
+                
+            ))}
+            <button type="button" onClick={addVariant}>Add Variant</button>
+
             <button type="submit">Submit</button>
         </form>
     </div>

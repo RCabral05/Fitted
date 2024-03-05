@@ -13,26 +13,32 @@ const ProductSchema = new Schema({
   status: {
     type: String,
     required: true,
-    enum: ['available', 'unavailable', 'discontinued'] // Example statuses
+    enum: ['available', 'unavailable', 'discontinued']
   },
   images: [{
-    type: String, // Assuming URLs to the images
+    type: String,
     required: true
   }],
   price: {
     type: Number,
     required: true
   },
+  compareAtPrice: {
+    type: Number
+  },
+  costPerItem: {
+    type: Number
+  },
   sku: {
     type: Number,
   },
   quantity: {
     type: Number,
-    default: 0 // Set to 0 to handle 'unlimited' by not setting a maximum
+    default: 0
   },
   variant: [{
-    type: Schema.Types.ObjectId, // Referencing products themselves if they are variants
-    ref: 'Product'
+    type: Schema.Types.ObjectId,
+    ref: 'Variant'
   }],
   vendor: {
     type: String,
@@ -49,14 +55,46 @@ const ProductSchema = new Schema({
     type: String
   }],
   storeId: {
-    type: Schema.Types.ObjectId, // Assuming the storeId is an ObjectId
-    ref: 'Store', // Adjust this to your actual store model name if it's different
+    type: Schema.Types.ObjectId,
+    ref: 'Store',
     required: true
   },
 }, {
-  timestamps: true // Adds createdAt and updatedAt timestamps
+  timestamps: true
 });
 
-const Products = model("Products", ProductSchema);
+const VariantSchema = new Schema({
+  productId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    // required: true
+  },
+  variantImage: {
+    type: String
+  },
+  variantPrice: {
+    type: Number,
+  },
+  variantCostPerItem: {
+    type: Number
+  },
+  variantSku: {
+    type: Number
+  },
+  variantQuantity: {
+    type: Number,
+    default: 0
+  },
+  variantName: {
+    type: String,
+  },
+  variantValues: [{
+    type: String
+  }]
+});
 
-export default Products;
+
+const Products = model("Products", ProductSchema);
+const Variants = model("Variants", VariantSchema);
+
+export default { Products, Variants };

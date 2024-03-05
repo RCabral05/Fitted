@@ -18,7 +18,10 @@ const filefilter = (req, file, cb) => {
   }
 };
 
-const multerUpload = multer({ storage: storage, fileFilter: filefilter });
+const multerUpload = multer({ storage: storage, fileFilter: filefilter }).fields([
+  { name: 'images', maxCount: 5 },
+  { name: 'variantImages', maxCount: 5 } // Adjust the maxCount as needed
+]);
 
 const s3 = new S3({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
@@ -27,14 +30,19 @@ const s3 = new S3({
 
 export { multerUpload };
 
-export function uploadImage(image, onUploadComplete) {
-    console.log("Starting upload...", image.originalname);
-    const params = {
-        Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-        Key: `images/${image.originalname}`,
-        Body: image.buffer,
-        ContentType: "image/jpeg",
-    };
+export function uploadImage(image, onUploadComplete, isVariantImage = false) {
+  console.log("Starting upload...", image.originalname);
+  
+  // Determine the directory based on whether the image is a variant image
+  const directory = isVariantImage ? 'variantImages' : 'images';
+  
+  const params = {
+      Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+      Key: `${directory}/${image.originalname}`, // Use the directory variable here
+      Body: image.buffer,
+      ContentType: "image/jpeg",
+  };
 
-    s3.upload(params, onUploadComplete);
+  s3.upload(params, onUploadComplete);
 }
+
