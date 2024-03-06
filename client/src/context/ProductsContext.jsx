@@ -7,6 +7,8 @@ export const useProducts = () => useContext(ProductsContext);
 
 export const ProductsProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
+    const [tags, setTags] = useState([]);
+
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -82,14 +84,29 @@ export const ProductsProvider = ({ children }) => {
         }
     }, []); // No dependencies
 
+    const fetchTags = useCallback(async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/get-tags`);
+            setTags(response.data); // Assuming the response is an array of tags
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchTags(); // Fetch tags when the component mounts
+    }, [fetchTags]);
+    console.log(tags);
     return (
         <ProductsContext.Provider value={{
             products,
+            tags,
             fetchProductsForStore,
             addProduct,
             updateProduct,
             deleteProduct,
-            fetchProductById
+            fetchProductById,
+            fetchTags
         }}>
             {children}
         </ProductsContext.Provider>

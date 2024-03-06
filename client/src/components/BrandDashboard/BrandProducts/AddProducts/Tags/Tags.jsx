@@ -1,40 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// Tags.js
+import React from 'react';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { useProducts } from '../../../../../context/ProductsContext';
 
 export function Tags({ selectedTags, setSelectedTags }) {
-    const [allTags, setAllTags] = useState([]);
+    const { tags } = useProducts();
+    const animatedComponents = makeAnimated();
 
-    useEffect(() => {
-        const fetchTags = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/get-tags`);
-                setAllTags(response.data);
-            } catch (error) {
-                console.error('Error fetching tags:', error);
-            }
-        };
+    // Convert tags for use with react-select
+    const options = tags.map(tag => ({ value: tag.name, label: tag.name }));
 
-        fetchTags();
-    }, []);
-
-    const handleChange = (event) => {
-        const selectedValue = event.target.value;
-        if (!selectedTags.includes(selectedValue)) {
-            setSelectedTags([...selectedTags, selectedValue]);
-        }
+    // Handle change in selection
+    const handleChange = (selectedOptions) => {
+        setSelectedTags(selectedOptions.map(option => option.value));
     };
+
+    // Format the selected tags for the react-select component
+    const value = selectedTags.map(tag => ({ value: tag, label: tag }));
 
     return (
         <div className="tags">
             <label>Tags:</label>
-            <select value="" onChange={handleChange}>
-                <option value="" disabled>Select a tag</option>
-                {allTags.map((tag, index) => (
-                    <option key={index} value={tag.name}>
-                        {tag.name}
-                    </option>
-                ))}
-            </select>
+            <Select
+                components={animatedComponents}
+                isMulti
+                closeMenuOnSelect={false}
+                options={options}
+                onChange={handleChange}
+                value={value}
+                hideSelectedOptions={false}
+                classNamePrefix="select"
+            />
         </div>
     );
 }

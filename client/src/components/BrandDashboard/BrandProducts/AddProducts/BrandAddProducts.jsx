@@ -8,7 +8,6 @@ import axios from 'axios';
 export function BrandAddProducts({ initialData, store }) {
     const { addProduct } = useProducts();
     const [selectedTags, setSelectedTags] = useState([]);
-    const [allTags, setAllTags] = useState([]);
     const { collections, fetchCollections } = useCollections();
     const [product, setProduct] = useState(initialData || {
         title: '',
@@ -25,20 +24,6 @@ export function BrandAddProducts({ initialData, store }) {
         tags: [],
         variants: []
     });
-
-    useEffect(() => {
-        // Fetch the tags from the server and set them in state
-        const fetchTags = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/tags`);
-                setAllTags(response.data.map(tag => tag.name));
-            } catch (error) {
-                console.error('Error fetching tags:', error);
-            }
-        };
-
-        fetchTags();
-    }, []);
 
     useEffect(() => {
         fetchCollections(store._id);
@@ -149,7 +134,6 @@ export function BrandAddProducts({ initialData, store }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(product);
         const formData = new FormData();
         formData.append('title', product.title);
         formData.append('description', product.description);
@@ -160,39 +144,34 @@ export function BrandAddProducts({ initialData, store }) {
         formData.append('vendor', product.vendor);
         formData.append('collection', product.collection);
         formData.append('category', product.category);
-        selectedTags.forEach(tag => formData.append('tags', tag));
         formData.append('storeId', store._id);
-        product.tags.forEach(tag => formData.append('tags', tag));
-        product.imageFiles.forEach(file => formData.append('images', file));
     
-        // Append variant details
+        // Stringify the array of tags
+        formData.append('tags', JSON.stringify(selectedTags));
+
+    
+        product.imageFiles.forEach(file => formData.append('images', file));
+        
         product.variants.forEach((variant, index) => {
-            // Append each property of the variant except for the image file
             Object.keys(variant).forEach(key => {
-                // console.log('key', key);
                 if (key !== 'variantImageFile' && key !== 'variantImagePreview') {
                     formData.append(`variants[${index}][${key}]`, variant[key]);
                 }
             });
-    
-            // Append the variant image file if it exists
+            
             if (variant.variantImageFile) {
-                formData.append(`variantImages`, variant.variantImageFile); // Append the file to the form data
-                // You might need to adjust this logic depending on how you handle the file uploads
-                // Assuming you are calling the uploadImage function directly:
-                // uploadImage(variant.variantImageFile, yourUploadCompleteCallback, true); // Pass true for isVariantImage
+                formData.append(`variantImages`, variant.variantImageFile);
             }
-
         });
     
         try {
-            console.log('trying');
             await addProduct(formData);
             console.log('Product added successfully');
         } catch (error) {
             console.error("Error adding product:", error);
         }
     };
+    
     
     
     
@@ -262,7 +241,7 @@ export function BrandAddProducts({ initialData, store }) {
                       <option value="kids">Kids</option>
                   </select>
               </label>
-              <Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} allTags={allTags} />
+              <Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags}/>
             {/* Tags and variants input fields */}
             {product.variants.map((variant, index) => (
                 <div key={index} className="variant-section">

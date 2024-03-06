@@ -52,7 +52,8 @@ const ProductSchema = new Schema({
     required: true
   },
   tags: [{
-    type: String
+    type: String,
+    ref: 'Tag'
   }],
   storeId: {
     type: Schema.Types.ObjectId,

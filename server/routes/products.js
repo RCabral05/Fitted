@@ -3,6 +3,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from "dotenv";
 import axios from 'axios';
 import Models from "../models/Products.js";
+import Tags from '../models/Tags.js';
 
 
 import { multerUpload, uploadImage } from '../services/aws/bucket.js';
@@ -28,9 +29,12 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
             uploadedImages = await Promise.all(images.map(file => {
                 return new Promise((resolve, reject) => {
                     uploadImage(file, (error, data) => {
-                        if (error) reject(error);
-                        else resolve(data.Location);
-                    }, false);
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(data.Location);
+                        }
+                    }, false); // false indicates not a variant image
                 });
             }));
         }
@@ -40,59 +44,87 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
             uploadedVariantImages = await Promise.all(variantImages.map(file => {
                 return new Promise((resolve, reject) => {
                     uploadImage(file, (error, data) => {
-                        if (error) reject(error);
-                        else resolve(data.Location);
-                    }, true);
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(data.Location);
+                        }
+                    }, true); // true indicates a variant image
                 });
             }));
-            console.log(uploadedVariantImages);
         }
-        
 
-        // Extract product data and variants from req.body
-        let { variants, ...productData } = req.body;
+        // Extract product data, variants, and tags from req.body
+        let { variants = [], ...productData } = req.body;
         productData.images = uploadedImages;
+
+        // Parse tags if they are stringified
+        let tags = [];
+        try {
+            tags = JSON.parse(req.body.tags || '[]');
+        } catch (error) {
+            console.error('Error parsing tags:', error);
+        }
 
         // Create the product instance
         const newProduct = new Products({ ...productData, storeId: req.body.storeId });
 
-        // Preparing variant objects with their uploaded images
-        console.log('var', variants);
-
-        let updatedVariants = variants.map((variant, index) => ({
-            ...variant,
-            productId: newProduct._id,
-            variantImage: uploadedVariantImages[index]
-        }));
+        // Handle tags
+        let tagIds = await handleTags(tags);
+        newProduct.tags = tagIds;
 
         // Save the product
-        const savedProduct = await newProduct.save();
-        console.log('s', savedProduct);
+        await newProduct.save();
 
-        // Save variants if they exist
-        if (updatedVariants.length > 0) {
-            const savedVariants = await Promise.all(updatedVariants.map(async variant => {
-                const newVariant = new Variants(variant);
-                return newVariant.save();
-            }));
-            console.log('sv', savedVariants);
+        // Handle variants
+        let updatedVariants = await handleVariants(variants, newProduct._id, uploadedVariantImages);
 
-            savedProduct.variant = savedVariants.map(variant => variant._id);
-            await savedProduct.save();
-        }
+        // Update the product with saved variants
+        newProduct.variant = updatedVariants.map(variant => variant._id);
+        await newProduct.save();
 
-        res.status(201).send({ message: "Product and variants added successfully", product: savedProduct });
+        res.status(201).send({ message: "Product and variants added successfully", product: newProduct });
     } catch (error) {
         console.error('Error saving product and variants:', error);
         res.status(500).send({ message: "Failed to upload product and variants", error: error.toString() });
     }
 });
 
+// Handle the creation or retrieval of tags
+async function handleTags(tags) {
+    return await Promise.all(tags.map(async tagName => {
+        let tag = await Tags.findOne({ name: tagName });
+        if (!tag) {
+            tag = new Tags({ name: tagName });
+            await tag.save();
+        }
+        return tag._id;
+    }));
+}
+
+// Handle the creation of variants
+async function handleVariants(variants, productId, uploadedVariantImages) {
+    return await Promise.all(variants.map(async (variant, index) => {
+        console.log('Processing variant:', variant);
+        const variantData = {
+            ...variant,
+            productId: productId,
+            variantImage: uploadedVariantImages[index] || ''
+        };
+        const newVariant = new Variants(variantData);
+        const savedVariant = await newVariant.save();
+        console.log('Saved variant:', savedVariant);
+        return savedVariant;
+    }));
+}
+
 
 router.get('/api/products', async (req, res) => {
     try {
         // Fetch all products and populate the variant field to include variant details
-        const products = await Products.find({}).populate('variant');
+        const products = await Products.find({})
+                                        .populate('variant')
+                                        .populate('tags');
         res.json(products);
     } catch (error) {
         console.error('Error fetching all products:', error);
@@ -180,6 +212,14 @@ router.delete('/api/products/:id', async (req, res) => {
     }
 });
 
-
+router.get('/api/get-tags', async (req, res) => {
+    try {
+        const tags = await Tags.find({});
+        res.status(200).json(tags);
+    } catch (error) {
+        console.error('Error fetching tags:', error);
+        res.status(500).json({ message: "Failed to fetch tags", error: error.toString() });
+    }
+});
 
 export default router;
