@@ -161,7 +161,9 @@ router.get('/api/products/:productId', async (req, res) => {
         }
 
         // Fetch the product by ID and populate the variant field
-        const product = await Products.findById(productId).populate('Variants');
+        const product = await Products.findById(productId)
+                                                    .populate('variant')
+                                                    .populate('tags');
         if (!product) {
             return res.status(404).send({ message: "Product not found" });
         }
@@ -212,6 +214,10 @@ router.delete('/api/products/:id', async (req, res) => {
     }
 });
 
+//TAGS
+//
+//
+
 router.get('/api/get-tags', async (req, res) => {
     try {
         const tags = await Tags.find({});
@@ -221,5 +227,19 @@ router.get('/api/get-tags', async (req, res) => {
         res.status(500).json({ message: "Failed to fetch tags", error: error.toString() });
     }
 });
+
+//Add tags in MyAdmin
+router.post('/api/tags', async (req, res) => {
+    try {
+        const { name } = req.body;
+        const newTag = new Tags({ name });
+        await newTag.save();
+        res.status(201).json(newTag);
+    } catch (error) {
+        console.error('Error creating new tag:', error);
+        res.status(500).json({ message: 'Failed to create new tag', error: error.toString() });
+    }
+});
+
 
 export default router;

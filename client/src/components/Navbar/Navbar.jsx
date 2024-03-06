@@ -20,6 +20,7 @@ export const Navbar = () => {
     { text: 'Brand Dash', path: '/brand-dashboard' },
     { text: 'All Stores', path: '/all-stores' },
     { text: 'Cart', path: '/cart' },
+    { text: 'MyAdmin', path: '/MyAdmin' },
   ];
 
   return (

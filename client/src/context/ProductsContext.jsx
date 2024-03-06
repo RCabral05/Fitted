@@ -92,6 +92,19 @@ export const ProductsProvider = ({ children }) => {
             console.error('Error fetching tags:', error);
         }
     }, []);
+    // Inside ProductsProvider component
+
+    const createTag = useCallback(async (tagName) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/tags`, { name: tagName });
+            const newTag = response.data;
+            setTags([...tags, newTag]); // Update the local state to include the new tag
+        } catch (error) {
+            console.error('Error creating tag:', error);
+            throw error; // It's usually good practice to rethrow the error so it can be caught by the caller
+        }
+    }, [tags]); // Dependency on tags to ensure the latest state is used
+
 
     useEffect(() => {
         fetchTags(); // Fetch tags when the component mounts
@@ -106,7 +119,8 @@ export const ProductsProvider = ({ children }) => {
             updateProduct,
             deleteProduct,
             fetchProductById,
-            fetchTags
+            fetchTags,
+            createTag
         }}>
             {children}
         </ProductsContext.Provider>

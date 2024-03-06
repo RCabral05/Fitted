@@ -21,7 +21,7 @@ import ProductPage from "./pages/WebsitePages/ProductPage";
 import AllStoresPage from "./pages/WebsitePages/AllStoresPage";
 import ProductDetailsPage from "./pages/WebsitePages/ProductDetailsPage";
 import CartPage from "./pages/WebsitePages/CartPage";
-
+import MyAdminPage from "./pages/MyAdmin/MyAdminPage";
 // Create root element
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
@@ -45,6 +45,7 @@ root.render(
                   <Route path="/product/:productId" element={<ProductDetailsPage />} />
                   <Route path="/all-stores" element={<AllStoresPage />} />
                   <Route path="/Cart" element={<CartPage />} />
+                  <Route path="/MyAdmin" element={<MyAdminPage />} />
                   <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
                   <Route path="*" element={<p>Route not found</p>} />
                 </Route>
