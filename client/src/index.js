@@ -10,6 +10,7 @@ import { CollectionProvider } from "./context/CollectionContext";
 import { StoreProvider } from "./context/StoreContext";
 import { CartProvider } from './context/CartContext';
 import { ProductsProvider } from './context/ProductsContext';
+import { MyAdminProvider } from './context/MyAdminContext';
 import DiscordConnectPage from "./pages/DiscordPages/DiscordConnectPage";
 import SuccessPage from "./pages/DiscordPages/SuccessPage";
 import ServerUsersPage from "./pages/DiscordPages/ServerUsersPage";
@@ -33,23 +34,25 @@ root.render(
         <ProductsProvider>
           <StoreProvider>
             <CollectionProvider>
-              <Routes>
-                <Route path="/" element={<App />}>
-                  <Route index element={<ProductPage />} />
-                  {/* <Route path="/SignUp" element={<SignUp />} /> */}
-                  <Route path="/Connect-Discord" element={<DiscordConnectPage />}/>
-                  <Route path="/success" element={<SuccessPage />} />
-                  <Route path="/server-users" element={<ServerUsersPage />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/create-store" element={<CreateStorePage />} />
-                  <Route path="/product/:productId" element={<ProductDetailsPage />} />
-                  <Route path="/all-stores" element={<AllStoresPage />} />
-                  <Route path="/Cart" element={<CartPage />} />
-                  <Route path="/MyAdmin" element={<MyAdminPage />} />
-                  <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
-                  <Route path="*" element={<p>Route not found</p>} />
-                </Route>
-              </Routes>
+              <MyAdminProvider>
+                <Routes>
+                  <Route path="/" element={<App />}>
+                    <Route index element={<ProductPage />} />
+                    {/* <Route path="/SignUp" element={<SignUp />} /> */}
+                    <Route path="/Connect-Discord" element={<DiscordConnectPage />}/>
+                    <Route path="/success" element={<SuccessPage />} />
+                    <Route path="/server-users" element={<ServerUsersPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/create-store" element={<CreateStorePage />} />
+                    <Route path="/product/:productId" element={<ProductDetailsPage />} />
+                    <Route path="/all-stores" element={<AllStoresPage />} />
+                    <Route path="/Cart" element={<CartPage />} />
+                    <Route path="/MyAdmin" element={<MyAdminPage />} />
+                    <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
+                    <Route path="*" element={<p>Route not found</p>} />
+                  </Route>
+                </Routes>
+              </MyAdminProvider>
             </CollectionProvider>
           </StoreProvider>
         </ProductsProvider>

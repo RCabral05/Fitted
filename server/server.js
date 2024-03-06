@@ -8,7 +8,7 @@ import discord from './routes/discord.js';
 import { connectToServer } from "./db/conn.js";
 import products from './routes/products.js';
 import collections from './routes/collections.js';
-
+import myAdmin from './routes/myAdmin.js';
 // Initialize Express
 const app = express();
 
@@ -23,7 +23,7 @@ app.use(discord);
 app.use(stores);
 app.use(products);
 app.use(collections);
-
+app.use(myAdmin);
 // Constants
 const port = process.env.PORT || 3001;
 

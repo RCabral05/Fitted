@@ -228,18 +228,6 @@ router.get('/api/get-tags', async (req, res) => {
     }
 });
 
-//Add tags in MyAdmin
-router.post('/api/tags', async (req, res) => {
-    try {
-        const { name } = req.body;
-        const newTag = new Tags({ name });
-        await newTag.save();
-        res.status(201).json(newTag);
-    } catch (error) {
-        console.error('Error creating new tag:', error);
-        res.status(500).json({ message: 'Failed to create new tag', error: error.toString() });
-    }
-});
 
 
 export default router;
