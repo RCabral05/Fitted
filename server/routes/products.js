@@ -91,13 +91,15 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
 
 router.get('/api/products', async (req, res) => {
     try {
-      const products = await Products.find({});
-      res.json(products);
+        // Fetch all products and populate the variant field to include variant details
+        const products = await Products.find({}).populate('variant');
+        res.json(products);
     } catch (error) {
-      console.error('Error fetching all products:', error);
-      res.status(500).json({ message: 'Failed to fetch all products', error: error.toString() });
+        console.error('Error fetching all products:', error);
+        res.status(500).json({ message: 'Failed to fetch all products', error: error.toString() });
     }
 });
+
 
 router.get('/api/products/store/:storeId', async (req, res) => {
     try {
@@ -120,24 +122,24 @@ router.get('/api/products/store/:storeId', async (req, res) => {
 });
 
 router.get('/api/products/:productId', async (req, res) => {
-    console.log('in prod id');
     try {
-        const { productId } = req.params; // Extracting productId from the URL parameters
-        console.log(productId);
+        const { productId } = req.params;
         if (!productId) {
             return res.status(400).send({ message: "Product ID is required" });
         }
 
-        const product = await Products.findById(productId); // Fetching the product by its ID
+        // Fetch the product by ID and populate the variant field
+        const product = await Products.findById(productId).populate('Variants');
         if (!product) {
-            return res.status(404).send({ message: "Product not found" }); // Product with the given ID doesn't exist
+            return res.status(404).send({ message: "Product not found" });
         }
-        res.json(product); // Sending the found product as the response
+        res.json(product);
     } catch (error) {
         console.error('Error fetching product by ID:', error);
         res.status(500).json({ message: 'Failed to fetch product', error: error.toString() });
     }
 });
+
 
 router.put('/api/products/:id', async (req, res) => {
     const { id } = req.params; // Extracting the product ID from URL parameters

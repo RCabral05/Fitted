@@ -38,7 +38,7 @@ const ProductSchema = new Schema({
   },
   variant: [{
     type: Schema.Types.ObjectId,
-    ref: 'Variant'
+    ref: 'Variants'
   }],
   vendor: {
     type: String,
