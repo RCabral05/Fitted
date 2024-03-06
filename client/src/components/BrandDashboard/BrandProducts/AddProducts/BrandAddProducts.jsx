@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import './styles.css';
 import { useProducts } from '../../../../context/ProductsContext';
 import { useCollections } from '../../../../context/CollectionContext';
+import { Tags } from './Tags/Tags';  // Adjust the import according to your file structure
+import axios from 'axios';
 
 export function BrandAddProducts({ initialData, store }) {
     const { addProduct } = useProducts();
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [allTags, setAllTags] = useState([]);
     const { collections, fetchCollections } = useCollections();
     const [product, setProduct] = useState(initialData || {
         title: '',
@@ -21,6 +25,20 @@ export function BrandAddProducts({ initialData, store }) {
         tags: [],
         variants: []
     });
+
+    useEffect(() => {
+        // Fetch the tags from the server and set them in state
+        const fetchTags = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/tags`);
+                setAllTags(response.data.map(tag => tag.name));
+            } catch (error) {
+                console.error('Error fetching tags:', error);
+            }
+        };
+
+        fetchTags();
+    }, []);
 
     useEffect(() => {
         fetchCollections(store._id);
@@ -142,6 +160,7 @@ export function BrandAddProducts({ initialData, store }) {
         formData.append('vendor', product.vendor);
         formData.append('collection', product.collection);
         formData.append('category', product.category);
+        selectedTags.forEach(tag => formData.append('tags', tag));
         formData.append('storeId', store._id);
         product.tags.forEach(tag => formData.append('tags', tag));
         product.imageFiles.forEach(file => formData.append('images', file));
@@ -243,6 +262,7 @@ export function BrandAddProducts({ initialData, store }) {
                       <option value="kids">Kids</option>
                   </select>
               </label>
+              <Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} allTags={allTags} />
             {/* Tags and variants input fields */}
             {product.variants.map((variant, index) => (
                 <div key={index} className="variant-section">
