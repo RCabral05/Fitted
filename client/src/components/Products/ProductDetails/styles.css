@@ -1,0 +1,16 @@
+.product-details-container{
+    /* border: 1px solid red; */
+    display: flex;
+    height: 93vh;
+    width: 100%;
+    overflow: auto;
+}
+
+.product-details-container::-webkit-scrollbar{
+    display: none;
+}
+
+.product-details-container img{
+    /* border: 1px solid red; */
+    width: 100%;
+}

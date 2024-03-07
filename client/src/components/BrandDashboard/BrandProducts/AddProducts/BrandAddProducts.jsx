@@ -246,13 +246,19 @@ export function BrandAddProducts({ initialData, store }) {
             {product.variants.map((variant, index) => (
                 <div key={index} className="variant-section">
                     <label>Variant Name:
-                        <input
-                            type="text"
+                        <select
                             name="variantName"
                             value={variant.variantName}
                             onChange={(e) => handleVariantInputChange(index, e)}
-                        />
+                        >
+                            <option value="">Select Variant</option>
+                            <option value="Color">Color</option>
+                            <option value="Size">Size</option>
+                            <option value="Material">Material</option>
+                            <option value="Style">Style</option>
+                        </select>
                     </label>
+
                     
                     <label>Variant Price:
                         <input

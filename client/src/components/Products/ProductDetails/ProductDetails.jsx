@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useProducts } from '../../context/ProductsContext'; // Adjust this import as needed
+import { useProducts } from '../../../context/ProductsContext'; // Adjust this import as needed
 import { useParams } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../../context/CartContext';
+import './styles.css';
 
 export const ProductDetails = () => {
     const { productId } = useParams();
@@ -30,10 +31,16 @@ export const ProductDetails = () => {
         <div className="product-details-container">
             {product ? (
                 <div>
+                   
+                    {product.images.map((image, index) => (
+                        <img key={index} src={image} alt={product.title} />
+                    ))}
+                    <p>{product.category} {product.tags.map(tag => <span key={tag._id}> / {tag.name} </span>)}</p>
+
                     <h2>{product.title}</h2>
-                    <p>Description: {product.description}</p>
-                    <p>Category: {product.category}</p>
                     <p>Price: ${product.price}</p>
+
+                    <p>Description: {product.description}</p>
                     <p>SKU: {product.sku}</p>
                     <p>Status: {product.status}</p>
                     <p>Quantity: {product.quantity}</p>
@@ -53,12 +60,7 @@ export const ProductDetails = () => {
                             </div>
                         ))}
                     </div>
-                    <div>
-                        Images: 
-                        {product.images.map((image, index) => (
-                            <img key={index} src={image} alt={product.title} style={{ width: '100px', margin: '10px' }} />
-                        ))}
-                    </div>
+                   
                     <button onClick={() => addToCart(product)}>Add to Cart</button>
                 </div>
             ) : (
