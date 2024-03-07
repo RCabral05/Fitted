@@ -4,6 +4,8 @@ import { useProducts } from '../../../../context/ProductsContext';
 import { useCollections } from '../../../../context/CollectionContext';
 import { Tags } from './Tags/Tags';  // Adjust the import according to your file structure
 import axios from 'axios';
+import { Variants } from './Variants';
+import { ProductForm } from './ProductForm';
 
 export function BrandAddProducts({ initialData, store }) {
     const { addProduct } = useProducts();
@@ -64,6 +66,8 @@ export function BrandAddProducts({ initialData, store }) {
             product.imagePreviews.forEach(url => URL.revokeObjectURL(url));
         };
     }, [product.imagePreviews]);
+
+    // VARIANTS ============================================================================================================
 
     const handleVariantFileChange = (index, event) => {
         if (event.target && event.target.files && event.target.files.length > 0) {
@@ -131,7 +135,9 @@ export function BrandAddProducts({ initialData, store }) {
         }));
     };
 
-
+    // SUBMIT ============================================================================================================
+    
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -178,162 +184,25 @@ export function BrandAddProducts({ initialData, store }) {
   return (
     <div className="brand-prod">
         <form onSubmit={handleSubmit}>
-            <label>Title:
-                <input type="text" name="title" value={product.title} onChange={handleChange} required />
-            </label>
-            <label>Description:
-                <textarea name="description" value={product.description} onChange={handleChange} required />
-            </label>
-            <label>Status:
-                <select name="status" value={product.status} onChange={handleChange} required>
-                    <option value="available">Available</option>
-                    <option value="unavailable">Unavailable</option>
-                    <option value="discontinued">Discontinued</option>
-                </select>
-            </label>
-            <label>Images:</label>
-                <div className="image-upload-container">
-                    {product.imagePreviews.map((imageUrl, index) => (
-                        <div key={index} className="image-preview">
-                            <img src={imageUrl} alt="Preview" />
-                            <button type="button" onClick={() => removeImage(index)}>Remove</button>
-                        </div>
-                    ))}
-                    <input type="file" multiple onChange={handleFileChange} />
-                </div>
-            <label>Price:
-                <input type="number" name="price" value={product.price} onChange={handleChange} required />
-            </label>
-            <label>Sku:
-                <input type="number" name="sku" value={product.sku} onChange={handleChange} required />
-            </label>
-            <label>Quantity:
-                <input type="number" name="quantity" value={product.quantity} onChange={handleChange} />
-            </label>
-            <label>Vendor:
-                <input type="text" name="vendor" value={product.vendor} onChange={handleChange} required />
-            </label>
-            <label>Collection:
-                    <select 
-                        name="collection" 
-                        value={product.collection} 
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">Select a Collection</option>
-                        {collections.map((collection, index) => (
-                            <option key={index} value={collection._id}>
-                                {collection.collectionName}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-              <label>Category:
-                  <select 
-                      name="category" 
-                      value={product.category} 
-                      onChange={handleChange} 
-                      required
-                  >
-                      <option value="">Select a Category</option>
-                      <option value="mens">Men's</option>
-                      <option value="womens">Women's</option>
-                      <option value="kids">Kids</option>
-                  </select>
-              </label>
-              <Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags}/>
+            <ProductForm
+                product={product}
+                handleChange={handleChange}
+                handleFileChange={handleFileChange}
+                removeImage={removeImage}
+                collections={collections}
+            />
+            <Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags}/>
             {/* Tags and variants input fields */}
-            {product.variants.map((variant, index) => (
-                <div key={index} className="variant-section">
-                    <label>Variant Name:
-                        <select
-                            name="variantName"
-                            value={variant.variantName}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        >
-                            <option value="">Select Variant</option>
-                            <option value="Color">Color</option>
-                            <option value="Size">Size</option>
-                            <option value="Material">Material</option>
-                            <option value="Style">Style</option>
-                        </select>
-                    </label>
-
-                    
-                    <label>Variant Price:
-                        <input
-                            type="number"
-                            name="variantPrice"
-                            value={variant.variantPrice}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Compare At Price:
-                        <input
-                            type="number"
-                            name="variantCompareAtPrice"
-                            value={variant.variantCompareAtPrice}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Cost Per Item:
-                        <input
-                            type="number"
-                            name="variantCostPerItem"
-                            value={variant.variantCostPerItem}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant SKU:
-                        <input
-                            type="text"
-                            name="variantSku"
-                            value={variant.variantSku}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Quantity:
-                        <input
-                            type="number"
-                            name="variantQuantity"
-                            value={variant.variantQuantity}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Image:
-                        <input
-                            type="file"
-                            onChange={(e) => handleVariantFileChange(index, e)}
-                        />
-                        {/* {variant.variantImagePreview && (
-                            <img src={variant.variantImagePreview} alt="Variant Preview" style={{ width: '100px', height: 'auto' }} />
-                        )} */}
-                    </label>
-
-                    {/* Include input fields for variantValues if necessary */}
-                   {product.variants.map((variant, index) => (
-                    <div key={index} className="variant-section">
-                        {/* Existing variant inputs */}
-                        <label>Variant Values:</label>
-                        {variant.variantValues.map((value, vIndex) => (
-                            <div key={vIndex}>
-                                <input
-                                    type="text"
-                                    value={value}
-                                    onChange={(e) => handleVariantValueChange(index, vIndex, e.target.value)}
-                                />
-                                <button type="button" onClick={() => removeVariantValue(index, vIndex)}>Remove Value</button>
-                            </div>
-                        ))}
-                        <button type="button" onClick={() => addVariantValue(index)}>Add Value</button>
-                        <button type="button" onClick={() => removeVariant(index)}>Remove Variant</button>
-                    </div>
-                ))}
-                </div>
-                
-            ))}
-            <button type="button" onClick={addVariant}>Add Variant</button>
-
+            <Variants
+                variants={product.variants}
+                handleVariantInputChange={handleVariantInputChange}
+                handleVariantFileChange={handleVariantFileChange}
+                handleVariantValueChange={handleVariantValueChange}
+                addVariantValue={addVariantValue}
+                removeVariantValue={removeVariantValue}
+                removeVariant={removeVariant}
+                addVariant={addVariant}
+            />
             <button type="submit">Submit</button>
         </form>
     </div>

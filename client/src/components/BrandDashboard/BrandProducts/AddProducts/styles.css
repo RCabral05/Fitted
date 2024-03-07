@@ -1,4 +1,8 @@
 /* styles.css */
+.product-upper{
+    /* border: 1px solid red; */
+    background-color: gray;
+}
 .brand-prod {
     max-width: 500px;
     margin: 20px auto;
