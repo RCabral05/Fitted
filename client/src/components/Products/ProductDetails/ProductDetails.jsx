@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useProducts } from '../../../context/ProductsContext'; // Adjust this import as needed
 import { useParams } from 'react-router-dom';
+import { useProducts } from '../../../context/ProductsContext';
 import { useCart } from '../../../context/CartContext';
 import './styles.css';
 
@@ -8,6 +8,7 @@ export const ProductDetails = () => {
     const { productId } = useParams();
     const { fetchProductById } = useProducts();
     const [product, setProduct] = useState(null);
+    const [selectedVariant, setSelectedVariant] = useState(null);
     const [productNotFound, setProductNotFound] = useState(false);
     const { addToCart } = useCart();
 
@@ -16,6 +17,7 @@ export const ProductDetails = () => {
             try {
                 const fetchedProduct = await fetchProductById(productId);
                 setProduct(fetchedProduct);
+                setSelectedVariant(fetchedProduct?.variant[0] || null);
             } catch (error) {
                 console.error("Error fetching product:", error);
                 setProductNotFound(true);
@@ -27,41 +29,45 @@ export const ProductDetails = () => {
         }
     }, [productId, fetchProductById]);
 
+    const handleVariantClick = (variant) => {
+        setSelectedVariant(variant);
+    };
+
     return (
         <div className="product-details-container">
             {product ? (
                 <div>
-                   
-                    {product.images.map((image, index) => (
-                        <img key={index} src={image} alt={product.title} />
-                    ))}
-                    <p>{product.category} {product.tags.map(tag => <span key={tag._id}> / {tag.name} </span>)}</p>
-
-                    <h2>{product.title}</h2>
-                    <p>Price: ${product.price}</p>
-
-                    <p>Description: {product.description}</p>
-                    <p>SKU: {product.sku}</p>
-                    <p>Status: {product.status}</p>
-                    <p>Quantity: {product.quantity}</p>
-                    <p>Vendor: {product.vendor}</p>
-                    <div>
-                        Tags: {product.tags.map(tag => <span key={tag._id}>{tag.name} </span>)}
-                    </div>
-                    <div>
-                        Variants:
-                        {product.variant.map((variant, index) => (
-                            <div key={variant._id}>
-                                <p>Variant {index + 1}:</p>
-                                <p>Name: {variant.variantName}</p>
-                                <p>Price: ${variant.variantPrice}</p>
-                                <p>Quantity: {variant.variantQuantity}</p>
-                                <p>Image: <img src={variant.variantImage} alt={variant.variantName} style={{width: '100px'}} /></p>
-                            </div>
+                    <div className="product-slider">
+                        {product.images.map((image, index) => (
+                            <img key={index} src={image} alt={product.title} className="product-image" />
                         ))}
                     </div>
-                   
-                    <button onClick={() => addToCart(product)}>Add to Cart</button>
+                    <div className="product-info">
+                        <h2>{product.title}</h2>
+                        <p>{product.category} / {product.tags.map(tag => tag.name).join(' / ')}</p>
+                        <p>Description: {product.description}</p>
+                        <p>SKU: {selectedVariant ? selectedVariant.variantSku : product.sku}</p>
+                        <p>Price: ${selectedVariant ? selectedVariant.variantPrice : product.price}</p>
+                        <p>Quantity: {selectedVariant ? selectedVariant.variantQuantity : product.quantity}</p>
+                        <p>Vendor: {product.vendor}</p>
+                        <div className="product-tags">
+                            Tags: {product.tags.map(tag => <span key={tag._id} className="product-tag">{tag.name}</span>)}
+                        </div>
+                        <div className="product-variants">
+                            <h3>Variants:</h3>
+                            {product.variant.map((variant, index) => (
+                                <button key={variant._id} 
+                                        className="variant-button"
+                                        onClick={() => handleVariantClick(variant)}>
+                                    Variant {index + 1}
+                                </button>
+                            ))}
+                        </div>
+                        <button onClick={() => addToCart(selectedVariant || product)}>Add to Cart</button>
+                    </div>
+                    {selectedVariant && (
+                        <img src={selectedVariant.variantImage} alt="Selected Variant" className="selected-variant-image" />
+                    )}
                 </div>
             ) : (
                 productNotFound ? <p>Product not found.</p> : <p>Loading product...</p>

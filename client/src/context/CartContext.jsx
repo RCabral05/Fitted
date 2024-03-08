@@ -46,6 +46,7 @@ export const CartProvider = ({ children }) => {
     
             return newCart;
         });
+        console.log('cart', cart);
     };
     
 
@@ -59,6 +60,7 @@ export const CartProvider = ({ children }) => {
     const updateQuantity = (cartItemId, changeType) => {
         setCart(currentCart => {
             const newCart = currentCart.map(item => {
+                console.log(item);
                 if (item.cartItemId === cartItemId) {
                     let updatedQuantity = item.quantity;
                     if (changeType === 'increment') {

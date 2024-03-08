@@ -1,58 +1,79 @@
-import React from 'react';
-import { useCart } from '../../../context/CartContext'; // Adjust path as necessary
-import './styles.css'; // Ensure you have a CSS file with the necessary styles
+import React, { useState, useEffect } from 'react';
+import { useCart } from '../../../context/CartContext';
+import { useProducts } from '../../../context/ProductsContext';
+import './styles.css';
 import TrashIcon from '@mui/icons-material/DeleteOutline';
 
 const CartItem = ({ item }) => {
     const { updateQuantity, removeFromCart } = useCart();
-    const DEFAULT_IMAGE_URL = "https://divtech-project.s3.us-east-2.amazonaws.com/images/default_prod.png";
-    console.log('item', item);
+    const { fetchProductById } = useProducts();
+    const [mainProduct, setMainProduct] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    // let price = item.selectedVariant && item.selectedVariant.title !== 'Default Title' 
-    //             ? item.selectedVariant.price 
-    //             : item.variants[0].price;
+    useEffect(() => {
+        const loadProduct = async () => {
+            if (!item.productId) {
+                // If the item is not a variant (or doesn't have a productId), don't fetch the main product.
+                return;
+            }
+            try {
+                setIsLoading(true);
+                const productData = await fetchProductById(item.productId);
+                setMainProduct(productData);
+                console.log('mp', mainProduct);
+            } catch (error) {
+                console.error('Error fetching product:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    // price = Number(price);
+        loadProduct();
+    }, [item.productId, item._id, fetchProductById]);
 
-    // const displayPrice = isNaN(price) ? 'N/A' : price.toFixed(2);
+    // Show loading indicator only if we are actually loading data.
+    if (isLoading) {
+        return <div>Loading product details...</div>;
+    }
 
-    // const totalItemPrice = displayPrice * item.quantity;
+    // Choose what to display: variant details or main product details
+    const imageUrl = item.variantImage || item?.images[0] || "https://divtech-project.s3.us-east-2.amazonaws.com/images/default_prod.png";
+    const price = item.variantPrice || item.price || mainProduct?.price;
+    const cartQuantity = item.quantity;
+    const productQuantity = item.variantQuantity || mainProduct?.quantity || mainProduct?.stockQuantity;
+    const title = item.title || mainProduct?.title;
+    const { color, size } = item.variantValues?.[0] || {};
 
-    // const variantImage = item.images && item.selectedVariant && item.selectedVariant.image_id
-    //                     ? item.images.find(image => image.id === item.selectedVariant.image_id)
-    //                     : null;
-    // const imageUrl = variantImage ? variantImage.src : (item.images && item.images[0] ? item.images[0].src : DEFAULT_IMAGE_URL);
+    const incrementQuantity = () => {
+        if (cartQuantity < productQuantity) {
+            updateQuantity(item.cartItemId, 'increment');
+        } else {
+            alert("You've reached the maximum available quantity for this item.");
+        }
+    };
+
+    const decrementQuantity = () => {
+        if (cartQuantity > 1) {
+            updateQuantity(item.cartItemId, 'decrement');
+        } else {
+            alert("Minimum quantity reached. Remove the item if needed.");
+        }
+    };
 
     return (
         <div className="CartItem-container">
-           {/* <img className="CartItem-image" src={imageUrl} alt={item.title} />
+            <img className="CartItem-image" src={imageUrl} alt="Product" />
             <div className="CartItem-details">
-                <h3 className="CartItem-title">
-                    {item.title}
-                    {item.selectedVariant && item.selectedVariant.title !== 'Default Title' && ` - ${item.selectedVariant.title}`}
-                </h3>
-                <p className="CartItem-price">${displayPrice}
-                    {item.quantity > 1 && 
-                        <span style={{ color: 'rgb(49, 180, 255)' }}> | Total: ${totalItemPrice}</span>
-                    }
-                </p>
-                <p className="CartItem-price-total">${totalItemPrice}</p> Display the formatted price
+                <h3 className="CartItem-title">{title} - {color} {size}</h3>
+                <p className="CartItem-price">${price.toFixed(2)}</p>
+                <p className="CartItem-price-total">Total: ${price * cartQuantity.toFixed(2)}</p>
                 <div className="CartItem-quantity-controls">
-                    <div className="quantity-controls">
-                        <button className="CartItem-quantity-decrease" onClick={() => updateQuantity(item.cartItemId, 'decrement')}>
-                            -
-                        </button>
-                        <span className="CartItem-quantity">{item.quantity}</span>
-                        <button className="CartItem-quantity-increase" onClick={() => updateQuantity(item.cartItemId, 'increment')}>
-                            +
-                        </button>
-                    </div>
-
-                    <button className="CartItem-remove" onClick={() => removeFromCart(item.cartItemId)}>
-                        <TrashIcon />
-                    </button>
+                    <button className="CartItem-quantity-decrease" onClick={decrementQuantity}>-</button>
+                    <span className="CartItem-quantity">{cartQuantity}</span>
+                    <button className="CartItem-quantity-increase" onClick={incrementQuantity}>+</button>
+                    <button className="CartItem-remove" onClick={() => removeFromCart(item.cartItemId)}><TrashIcon /></button>
                 </div>
-            </div> */}
+            </div>
         </div>
     );
 };

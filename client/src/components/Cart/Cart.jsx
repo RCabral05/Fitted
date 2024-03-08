@@ -12,19 +12,19 @@ export const Cart = () => {
         console.log('Cart updated:', cart);
     }, [cart]);
 
-    // const calculateSubtotal = () => {
-    //     return cart.reduce((total, item) => {
-    //         // Check if a selectedVariant exists and use its price, otherwise default to a predefined value
-    //         const itemPrice = item.selectedVariant ? item.selectedVariant.price : 0;
-    //         return total + (itemPrice * item.quantity);
-    //     }, 0);
-    // };
+    const calculateSubtotal = () => {
+        return cart.reduce((total, item) => {
+            console.log('item', item);
+            // Check if a selectedVariant exists and use its price, otherwise default to a predefined value
+            return total + (item.price || item.variantPrice * item.quantity);
+        }, 0);
+    };
     
 
-    // const handleCheckout = () => {
-    //     const subtotal = calculateSubtotal();
-    //     checkout(subtotal); 
-    // };
+    const handleCheckout = () => {
+        const subtotal = calculateSubtotal();
+        checkout(subtotal); 
+    };
 
     const startShopping = () => {
         navigate('/');
@@ -43,12 +43,12 @@ export const Cart = () => {
             {cart.length > 0 && (
                 <div className="Cart-footer">
                     <div className="Cart-subtotal">
-                        {/* <p className="Cart-subtotal-text"><span style={{ color: 'rgb(49, 180, 255)'}}>Total: </span> ${calculateSubtotal().toFixed(2)}</p> */}
+                        <p className="Cart-subtotal-text"><span style={{ color: 'rgb(49, 180, 255)'}}>Total: </span> ${calculateSubtotal().toFixed(2)}</p>
                         <div className="Cart-actions">
                             <button className="Cart-empty-button" onClick={emptyCart}>Empty Cart</button>
-                            {/* <button className="Cart-checkout-button" onClick={handleCheckout}>
+                            <button className="Cart-checkout-button" onClick={handleCheckout}>
                                 Checkout
-                            </button> */}
+                            </button>
                         </div>
                     </div>
                 </div>
