@@ -23,6 +23,8 @@ import AllStoresPage from "./pages/WebsitePages/AllStoresPage";
 import ProductDetailsPage from "./pages/WebsitePages/ProductDetailsPage";
 import CartPage from "./pages/WebsitePages/CartPage";
 import MyAdminPage from "./pages/MyAdmin/MyAdminPage";
+import PaymentCanceled from "./pages/WebsitePages/PaymentCanceled";
+import PaymentSuccessful from "./pages/WebsitePages/PaymentSuccessful";
 // Create root element
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
@@ -30,8 +32,8 @@ const root = createRoot(rootElement);
 root.render(
   <AuthProvider>
     <BrowserRouter>
-      <CartProvider>
-        <ProductsProvider>
+      <ProductsProvider>
+        <CartProvider>
           <StoreProvider>
             <CollectionProvider>
               <MyAdminProvider>
@@ -40,7 +42,6 @@ root.render(
                     <Route index element={<ProductPage />} />
                     {/* <Route path="/SignUp" element={<SignUp />} /> */}
                     <Route path="/Connect-Discord" element={<DiscordConnectPage />}/>
-                    <Route path="/success" element={<SuccessPage />} />
                     <Route path="/server-users" element={<ServerUsersPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/create-store" element={<CreateStorePage />} />
@@ -49,14 +50,17 @@ root.render(
                     <Route path="/Cart" element={<CartPage />} />
                     <Route path="/MyAdmin" element={<MyAdminPage />} />
                     <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
+                    <Route path="/success" element={<PaymentSuccessful />} />
+                    <Route path="/cancel" element={<PaymentCanceled />} />
                     <Route path="*" element={<p>Route not found</p>} />
+                  
                   </Route>
                 </Routes>
               </MyAdminProvider>
             </CollectionProvider>
           </StoreProvider>
-        </ProductsProvider>
-      </CartProvider>
+        </CartProvider>
+      </ProductsProvider>
     </BrowserRouter>
   </AuthProvider>
 );

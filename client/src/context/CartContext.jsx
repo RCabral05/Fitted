@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
+import { useProducts } from './ProductsContext';
 
 const CartContext = createContext();
 
@@ -10,6 +11,8 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+    const { fetchProductById } = useProducts();
+
 
     useEffect(() => {
         const savedCart = localStorage.getItem('cart');
@@ -93,20 +96,42 @@ export const CartProvider = ({ children }) => {
 
     const checkout = async (subtotal) => {
         console.log('Proceeding to checkout with cart items:', cart);
-        console.log('Subtotal:', subtotal);
-    
-        // Convert cart items to the format expected by your backend / Stripe
-        const stripeCartItems = cart.map(item => ({
-            id: item.selectedVariant.id,
-            name: item.title,
-            quantity: item.quantity,
-            price: item.selectedVariant.price,
+    let detailedCartItems = [];
+
+    for (const item of cart) {
+        if (item.productId) {
+            try {
+                const productDetails = await fetchProductById(item.productId);
+                detailedCartItems.push({ ...productDetails, ...item });  // Ensuring cart item's quantity is preserved
+            } catch (error) {
+                console.error('Error fetching product details:', error);
+            }
+        } else {
+            detailedCartItems.push(item);
+        }
+    }
+
+    console.log('Detailed cart items:', detailedCartItems);
+
+    // Convert cart items to the format expected by your backend / Stripe
+    const stripeCartItems = detailedCartItems.map(item => {
+        const id = item.variantValues?.[0]?._id || item._id;
+        const title = item.title + (item.variantValues ? ` ${item.variantValues[0].color} ${item.variantValues[0].size}` : '') || item.title;
+
+        // Logging the quantity for each item
+        console.log(`Quantity for item ${id}:`, item.quantity);
+
+        return {
+            id: id,
+            name: title,
+            quantity: item.quantity,  // Directly using the quantity from the item
+            price: item.price,
             subtotal: subtotal,
             vendor: item.vendor,
-            selectedVariant: item.selectedVariant,
-            // Add other necessary item details required by your backend
-        }));
-        
+        };
+    });
+
+    console.log('Stripe cart items:', stripeCartItems);
     
         try {
             const stripe = await stripePromise;

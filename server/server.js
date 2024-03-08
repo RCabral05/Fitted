@@ -9,6 +9,8 @@ import { connectToServer } from "./db/conn.js";
 import products from './routes/products.js';
 import collections from './routes/collections.js';
 import myAdmin from './routes/myAdmin.js';
+import stripe from './routes/stripe.js';
+
 // Initialize Express
 const app = express();
 
@@ -24,6 +26,7 @@ app.use(stores);
 app.use(products);
 app.use(collections);
 app.use(myAdmin);
+app.use(stripe);
 // Constants
 const port = process.env.PORT || 3001;
 
