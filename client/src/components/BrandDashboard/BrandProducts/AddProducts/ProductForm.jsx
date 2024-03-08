@@ -45,7 +45,6 @@ export function ProductForm({ product, handleChange, handleFileChange, removeIma
               name="collection" 
               value={product.collection} 
               onChange={handleChange}
-              required
           >
               <option value="">Select a Collection</option>
               {collections.map((collection, index) => (

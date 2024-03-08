@@ -4,7 +4,7 @@ import { useProducts } from '../../../context/ProductsContext';
 
 export function BrandCollections({ store }) {
   const { createCollection } = useCollections();
-  const { products, fetchProductsForStore } = useProducts();
+  const { storeProducts, fetchProductsForStore } = useProducts();
   const [collectionData, setCollectionData] = useState({
     collectionName: '',
     collectionDescription: '',
@@ -94,7 +94,7 @@ export function BrandCollections({ store }) {
         <div>
           <strong>Select Products:</strong>
           <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-            {products.map(product => (
+            {storeProducts.map(product => (
               <label key={product._id}>
                 <input
                   type="checkbox"
@@ -112,7 +112,7 @@ export function BrandCollections({ store }) {
 
       <h2>Products</h2>
       <ul>
-        {products.map(product => (
+        {storeProducts.map(product => (
           <li key={product._id}>{product.title}</li>
         ))}
       </ul>

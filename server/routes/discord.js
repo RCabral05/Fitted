@@ -90,7 +90,7 @@ router.get('/api/discord/callback', async (req, res) => {
     };
 
     res.cookie('auth_token', access_token, { httpOnly: true, secure: true });
-    res.redirect(`http://localhost:3001/success?data=${encodeURIComponent(JSON.stringify(userData))}`);
+    res.redirect(`http://localhost:3001/connect-success?data=${encodeURIComponent(JSON.stringify(userData))}`);
   } catch (error) {
     console.error('Error during code exchange or user data fetching:', error);
     res.status(500).send('Internal Server Error');

@@ -5,7 +5,7 @@ import { useProducts } from '../../../../context/ProductsContext';
 import { BrandAddProducts } from '../AddProducts/BrandAddProducts';
 import { BrandUpdateProducts } from '../EditProducts/BrandUpdateProducts';
 
-export function BrandProducts({ products }) {
+export function BrandProducts({ products, store }) {
   const { stores } = useStores();
   const [view, setView] = useState('products');
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -35,7 +35,7 @@ export function BrandProducts({ products }) {
         {view === 'products' ? 'Add Product' : 'View Products'}
       </button>
 
-      {view === 'add' && <BrandAddProducts store={stores[0]} />}
+      {view === 'add' && <BrandAddProducts store={store} />}
       {view === 'update' && <BrandUpdateProducts initialData={selectedProduct} store={stores[0]} />}
 
       {view === 'products' && (

@@ -8,6 +8,7 @@ import { Variants } from './Variants';
 import { ProductForm } from './ProductForm';
 
 export function BrandAddProducts({ initialData, store }) {
+    console.log("ID", store);
     const [options, setOptions] = useState([]);
     const [variantCombinations, setVariantCombinations] = useState([]);
 

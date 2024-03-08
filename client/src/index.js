@@ -42,6 +42,7 @@ root.render(
                     <Route index element={<ProductPage />} />
                     {/* <Route path="/SignUp" element={<SignUp />} /> */}
                     <Route path="/Connect-Discord" element={<DiscordConnectPage />}/>
+                    <Route path="/connect-success" element={<SuccessPage/>} />
                     <Route path="/server-users" element={<ServerUsersPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/create-store" element={<CreateStorePage />} />

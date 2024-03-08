@@ -60,9 +60,12 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
 
 
         // Extract product data, variants, and tags from req.body
-        let { variants = [], ...productData } = req.body;
+        let { variants = [], storeId, ...productData } = req.body;
+        if (!storeId) {
+            return res.status(400).send({ message: "storeId is required" });
+        }
         productData.images = uploadedImages;
-
+        productData.storeId = storeId;
         // Parse tags if they are stringified
         let tags = [];
         try {
@@ -148,7 +151,7 @@ router.get('/api/products', async (req, res) => {
 router.get('/api/products/store/:storeId', async (req, res) => {
     try {
         const { storeId } = req.params;
-        // console.log('sid', storeId);
+        console.log('sid', storeId);
         if (!storeId) {
             return res.status(400).send({ message: "Store ID is required" });
         }
@@ -157,7 +160,6 @@ router.get('/api/products/store/:storeId', async (req, res) => {
         if (products.length === 0) {
             return res.status(404).send({ message: "No products found for the given store ID" });
         }
-
         res.json(products);
     } catch (error) {
         console.error('Error fetching products for store:', error);

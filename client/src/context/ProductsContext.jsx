@@ -8,6 +8,7 @@ export const useProducts = () => useContext(ProductsContext);
 export const ProductsProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [tags, setTags] = useState([]);
+    const [storeProducts, setStoreProducts] = useState([]);
 
 
     const fetchProducts = useCallback(async () => {
@@ -24,9 +25,11 @@ export const ProductsProvider = ({ children }) => {
     }, [fetchProducts]);
 
     const fetchProductsForStore = useCallback(async (storeId) => {
+        console.log(storeId);
         try {
             const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/products/store/${storeId}`);
-            setProducts(response.data);
+            setStoreProducts(response.data);
+
         } catch (error) {
             console.error('Error fetching products for store:', error);
         }
@@ -100,6 +103,7 @@ export const ProductsProvider = ({ children }) => {
     return (
         <ProductsContext.Provider value={{
             products,
+            storeProducts,
             tags,
             fetchProductsForStore,
             addProduct,
