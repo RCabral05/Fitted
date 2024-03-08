@@ -19,8 +19,8 @@ const filefilter = (req, file, cb) => {
 };
 
 const multerUpload = multer({ storage: storage, fileFilter: filefilter }).fields([
-  { name: 'images', maxCount: 5 },
-  { name: 'variantImages', maxCount: 5 } // Adjust the maxCount as needed
+  { name: 'images', maxCount: 10 },
+  { name: 'variantImages', maxCount: 10 } // Adjust the maxCount as needed
 ]);
 
 const s3 = new S3({

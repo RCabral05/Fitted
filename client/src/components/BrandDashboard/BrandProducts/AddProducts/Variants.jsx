@@ -1,102 +1,209 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
 
+const cartesianProduct = (arr) => {
+    if (arr.length === 0) {
+        return [[]]; // Return a single empty array to handle the base case
+    }
 
-export function Variants({ variants, handleVariantInputChange, handleVariantFileChange, handleVariantValueChange, addVariantValue, removeVariantValue, removeVariant, addVariant }) {
+    return arr.reduce((a, b) => {
+        return a.flatMap((d) => b.map((e) => [d, e].flat()));
+    }, [[]]); // Start with an array containing one empty array
+};
 
-  return (
-    <>
-            {variants.map((variant, index) => (
-                <div key={index} className="variant-section">
-                    <label>Variant Name:
-                        <select
-                            name="variantName"
-                            value={variant.variantName}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        >
-                            <option value="">Select Variant</option>
-                            <option value="Color">Color</option>
-                            <option value="Size">Size</option>
-                            <option value="Material">Material</option>
-                            <option value="Style">Style</option>
-                        </select>
-                    </label>
 
-                    
-                    <label>Variant Price:
-                        <input
-                            type="number"
-                            name="variantPrice"
-                            value={variant.variantPrice}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Compare At Price:
-                        <input
-                            type="number"
-                            name="variantCompareAtPrice"
-                            value={variant.variantCompareAtPrice}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Cost Per Item:
-                        <input
-                            type="number"
-                            name="variantCostPerItem"
-                            value={variant.variantCostPerItem}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant SKU:
-                        <input
-                            type="text"
-                            name="variantSku"
-                            value={variant.variantSku}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Quantity:
-                        <input
-                            type="number"
-                            name="variantQuantity"
-                            value={variant.variantQuantity}
-                            onChange={(e) => handleVariantInputChange(index, e)}
-                        />
-                    </label>
-                    <label>Variant Image:
-                        <input
-                            type="file"
-                            onChange={(e) => handleVariantFileChange(index, e)}
-                        />
-                        {/* {variant.variantImagePreview && (
-                            <img src={variant.variantImagePreview} alt="Variant Preview" style={{ width: '100px', height: 'auto' }} />
-                        )} */}
-                    </label>
 
-                    {/* Include input fields for variantValues if necessary */}
-                   {variants.map((variant, index) => (
-                    <div key={index} className="variant-section">
-                        {/* Existing variant inputs */}
-                        <label>Variant Values:</label>
-                        {variant.variantValues.map((value, vIndex) => (
-                            <div key={vIndex}>
+const generateVariantCombinations = (options) => {
+    // Map the options to their values only
+    const values = options.map((option) => option.values);
+    // Get the cartesian product of all option values
+    const combinations = cartesianProduct(values);
+    console.log(combinations);
+    // Map the combinations to an object with option names as keys
+    return combinations.map((combination) => ({
+        variantPrice: '',
+        variantCompareAtPrice: '',
+        variantCostPerItem: '',
+        variantSku: '',
+        variantQuantity: '',
+        variantImageFile: null,
+        variantImagePreview: '',
+        ...combination.reduce((acc, value, index) => ({
+            ...acc,
+            [options[index].name]: value,
+        }), {})
+    }));
+};
+
+
+export function Variants({ 
+    options,
+    setOptions,
+    variantCombinations,
+    setVariantCombinations,
+    handleVariantInputChange,
+    handleVariantFileChange
+}) {
+    // Use effect to generate variants when options change
+    useEffect(() => {
+        // Make sure options have at least one option with one value to generate combinations
+        if (options.some(option => option.values.length > 0)) {
+            const newVariantCombinations = generateVariantCombinations(options);
+            setVariantCombinations(newVariantCombinations);
+        } else {
+            // If no options with values, clear the variant combinations
+            setVariantCombinations([]);
+        }
+    }, [options, setVariantCombinations]);
+
+    const addOption = () => {
+        setOptions([...options, { name: '', values: [''] }]);
+    };
+
+    const removeOption = (optionIndex) => {
+        const updatedOptions = options.filter((_, index) => index !== optionIndex);
+        setOptions(updatedOptions);
+    };
+
+    const handleOptionNameChange = (optionIndex, newName) => {
+        const updatedOptions = options.map((option, index) =>
+            index === optionIndex ? { ...option, name: newName } : option
+        );
+        setOptions(updatedOptions);
+    };
+
+    const addValue = (optionIndex) => {
+        const updatedOptions = options.map((option, index) => {
+            if (index === optionIndex) {
+                return { ...option, values: [...option.values, ''] };
+            }
+            return option;
+        });
+        setOptions(updatedOptions);
+    };
+
+    const removeValue = (optionIndex, valueIndex) => {
+        const updatedOptions = options.map((option, index) => {
+            if (index === optionIndex) {
+                return {
+                    ...option,
+                    values: option.values.filter((_, idx) => idx !== valueIndex),
+                };
+            }
+            return option;
+        });
+        setOptions(updatedOptions);
+    };
+
+    const handleValueChange = (optionIndex, valueIndex, newValue) => {
+        const updatedOptions = options.map((option, index) => {
+            if (index === optionIndex) {
+                const updatedValues = option.values.map((value, idx) =>
+                    idx === valueIndex ? newValue : value
+                );
+                return { ...option, values: updatedValues };
+            }
+            return option;
+        });
+        setOptions(updatedOptions);
+    };
+
+    // Render options and values for editing
+    return (
+        <div className='var-con'>
+           <button type="button" className="button add-option-button" onClick={addOption}>
+                Add Option
+            </button>
+            {options.map((option, optionIndex) => (
+                <div key={optionIndex} className="option-section">
+                    <input
+                        className="input-field"
+                        type="text"
+                        placeholder="Option name (e.g., Color, Size)"
+                        value={option.name}
+                        onChange={(e) => handleOptionNameChange(optionIndex, e.target.value)}
+                    />
+                    {option.values.map((value, valueIndex) => (
+                        <div key={valueIndex} className="value-section">
+                            <input
+                                className="input-field"
+                                type="text"
+                                placeholder="Value (e.g., Red, Small)"
+                                value={value}
+                                onChange={(e) => handleValueChange(optionIndex, valueIndex, e.target.value)}
+                            />
+                            <button type="button" onClick={() => removeValue(optionIndex, valueIndex)}>
+                                Remove Value
+                            </button>
+                        </div>
+                    ))}
+                    <button type="button" className="button" onClick={() => addValue(optionIndex)}>
+                        Add Value
+                    </button>
+                    <button type="button" className="button" onClick={() => removeOption(optionIndex)}>
+                        Remove Option
+                    </button>
+
+
+                   
+                </div>
+            ))}
+
+                    {variantCombinations?.map((variant, index) => (
+                        <div key={index} className="variant-combination-section">
+                            <p>Variant Combination: {JSON.stringify(variant.color + '/' + variant.size)}</p>
+                            <label>Variant Price:
+                                <input
+                                    type="number"
+                                    name="variantPrice"
+                                    value={variant.variantPrice || ''}
+                                    onChange={(e) => handleVariantInputChange(index, e)}
+                                />
+                            </label>
+                            <label>Variant Compare At Price:
+                                <input
+                                    type="number"
+                                    name="variantCompareAtPrice"
+                                    value={variant.variantCompareAtPrice || ''}
+                                    onChange={(e) => handleVariantInputChange(index, e)}
+                                />
+                            </label>
+                            <label>Variant Cost Per Item:
+                                <input
+                                    type="number"
+                                    name="variantCostPerItem"
+                                    value={variant.variantCostPerItem || ''}
+                                    onChange={(e) => handleVariantInputChange(index, e)}
+                                />
+                            </label>
+                            <label>Variant SKU:
                                 <input
                                     type="text"
-                                    value={value}
-                                    onChange={(e) => handleVariantValueChange(index, vIndex, e.target.value)}
+                                    name="variantSku"
+                                    value={variant.variantSku || ''}
+                                    onChange={(e) => handleVariantInputChange(index, e)}
                                 />
-                                <button type="button" onClick={() => removeVariantValue(index, vIndex)}>Remove Value</button>
-                            </div>
-                        ))}
-                        <button type="button" onClick={() => addVariantValue(index)}>Add Value</button>
-                        <button type="button" onClick={() => removeVariant(index)}>Remove Variant</button>
-                    </div>
-                ))}
-                </div>
-                
-            ))}
-            <button type="button" onClick={addVariant}>Add Variant</button>
-
-    </>
-  );
+                            </label>
+                            <label>Variant Quantity:
+                                <input
+                                    type="number"
+                                    name="variantQuantity"
+                                    value={variant.variantQuantity || ''}
+                                    onChange={(e) => handleVariantInputChange(index, e)}
+                                />
+                            </label>
+                            <label>Variant Image:
+                                <input
+                                    type="file"
+                                    onChange={(e) => handleVariantFileChange(index, e)}
+                                />
+                                {variant.variantImagePreview && (
+                                    <img src={variant.variantImagePreview} alt="Variant Preview" style={{ width: '100px', height: 'auto' }} />
+                                )}
+                            </label>
+                        </div>
+                    ))}
+         
+        </ div>
+    );
 }

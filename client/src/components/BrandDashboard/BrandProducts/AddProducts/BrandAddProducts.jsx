@@ -8,6 +8,9 @@ import { Variants } from './Variants';
 import { ProductForm } from './ProductForm';
 
 export function BrandAddProducts({ initialData, store }) {
+    const [options, setOptions] = useState([]);
+    const [variantCombinations, setVariantCombinations] = useState([]);
+
     const { addProduct } = useProducts();
     const [selectedTags, setSelectedTags] = useState([]);
     const { collections, fetchCollections } = useCollections();
@@ -73,10 +76,17 @@ export function BrandAddProducts({ initialData, store }) {
         if (event.target && event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
             if (file instanceof File) {
-                const updatedVariants = [...product.variants];
-                updatedVariants[index].variantImageFile = file;
-                updatedVariants[index].variantImagePreview = URL.createObjectURL(file);
-                setProduct({ ...product, variants: updatedVariants });
+                setVariantCombinations(variantCombinations => {
+                    // Clone the array to avoid direct state mutation
+                    const updatedVariants = [...variantCombinations];
+                    // Check if the variant exists, and if not, initialize a new object
+                    if (!updatedVariants[index]) {
+                        updatedVariants[index] = {};
+                    }
+                    updatedVariants[index].variantImageFile = file;
+                    updatedVariants[index].variantImagePreview = URL.createObjectURL(file);
+                    return updatedVariants;
+                });
             } else {
                 console.error("The file is not a valid type");
             }
@@ -84,13 +94,26 @@ export function BrandAddProducts({ initialData, store }) {
             console.error("No file selected or the file input is cleared");
         }
     };
+    
 
     const handleVariantInputChange = (index, event) => {
         const { name, value } = event.target;
-        const updatedVariants = [...product.variants];
-        updatedVariants[index][name] = value;
-        setProduct({ ...product, variants: updatedVariants });
+    
+        // Copy the current state to a new array
+        const updatedVariantCombinations = [...variantCombinations];
+    
+        // Check if the variant object exists and has the property
+        if (updatedVariantCombinations[index] && updatedVariantCombinations[index].hasOwnProperty(name)) {
+            // Update the property value
+            updatedVariantCombinations[index][name] = value;
+    
+            // Update the state with the new array
+            setVariantCombinations(updatedVariantCombinations);
+        } else {
+            console.error(`Variant at index ${index} does not exist or does not have property ${name}`);
+        }
     };
+    
 
     const handleVariantValueChange = (variantIndex, valueIndex, value) => {
         const updatedVariants = [...product.variants];
@@ -154,19 +177,20 @@ export function BrandAddProducts({ initialData, store }) {
     
         // Stringify the array of tags
         formData.append('tags', JSON.stringify(selectedTags));
-
     
+        // Append the main product images
         product.imageFiles.forEach(file => formData.append('images', file));
-        
-        product.variants.forEach((variant, index) => {
-            Object.keys(variant).forEach(key => {
+    
+        // Append variant information
+        variantCombinations.forEach((variant, index) => {
+            Object.entries(variant).forEach(([key, value]) => {
                 if (key !== 'variantImageFile' && key !== 'variantImagePreview') {
-                    formData.append(`variants[${index}][${key}]`, variant[key]);
+                    formData.append(`variants[${index}][${key}]`, value);
                 }
             });
             
             if (variant.variantImageFile) {
-                formData.append(`variantImages`, variant.variantImageFile);
+                formData.append('variantImages', variant.variantImageFile);
             }
         });
     
@@ -184,24 +208,26 @@ export function BrandAddProducts({ initialData, store }) {
   return (
     <div className="brand-prod">
         <form onSubmit={handleSubmit}>
-            <ProductForm
-                product={product}
-                handleChange={handleChange}
-                handleFileChange={handleFileChange}
-                removeImage={removeImage}
-                collections={collections}
-            />
-            <Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags}/>
+            <div className="brand-form">
+                <ProductForm
+                    product={product}
+                    handleChange={handleChange}
+                    handleFileChange={handleFileChange}
+                    removeImage={removeImage}
+                    collections={collections}
+                />
+            </div>
+           <div className="brand-form">
+                <Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags}/>
+           </div>
             {/* Tags and variants input fields */}
             <Variants
-                variants={product.variants}
-                handleVariantInputChange={handleVariantInputChange}
-                handleVariantFileChange={handleVariantFileChange}
-                handleVariantValueChange={handleVariantValueChange}
-                addVariantValue={addVariantValue}
-                removeVariantValue={removeVariantValue}
-                removeVariant={removeVariant}
-                addVariant={addVariant}
+               options={options}
+               setOptions={setOptions}
+               variantCombinations={variantCombinations}
+               setVariantCombinations={setVariantCombinations}
+               handleVariantInputChange={handleVariantInputChange}
+               handleVariantFileChange={handleVariantFileChange}
             />
             <button type="submit">Submit</button>
         </form>

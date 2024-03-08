@@ -1,13 +1,22 @@
 /* styles.css */
 .product-upper{
     /* border: 1px solid red; */
+    width: 90%;
+
+}
+.var-con{
+    width: 90%;
+}
+.brand-form{
     background-color: gray;
+    margin-bottom: 20px;
+    width: 90%;
 }
 .brand-prod {
-    max-width: 500px;
+    width: 90%;
     margin: 20px auto;
     padding: 20px;
-    background-color: #f7f7f7;
+    /* background-color: #f7f7f7; */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -84,3 +93,88 @@
         padding: 10px;
     }
 }
+.option-section {
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style for the value sections */
+  .value-section {
+    background-color: white;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Input fields styling */
+  .input-field {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    margin-right: 10px;
+  }
+  
+  /* Style for buttons */
+  .button {
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button:hover {
+    background-color: #3f51b5;
+  }
+  
+  /* Style for the variant combination sections */
+  .variant-combination-section {
+    background-color: #e3e3e3;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  
+  /* Style for labels and their input fields */
+  .variant-combination-section label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .variant-combination-section input,
+  .variant-combination-section label {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  /* Styling the file input section */
+  .file-input-section {
+    border: 1px dashed #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  /* Style for the preview image */
+  .preview-image {
+    width: 100px;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+  }
+  
+  /* Style for the main button to add a new option */
+  .add-option-button {
+    display: block;
+    margin-top: 20px;
+    width: 100%;
+  }

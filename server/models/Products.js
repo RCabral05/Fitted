@@ -90,8 +90,12 @@ const VariantSchema = new Schema({
     type: String,
   },
   variantValues: [{
-    type: String
+    color: String,
+    size: String,
+    style: String,
+    material: String,
   }]
+  
 });
 
 
