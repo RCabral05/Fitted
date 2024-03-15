@@ -16,7 +16,7 @@ export const Cart = () => {
         return cart.reduce((total, item) => {
             console.log('item', item);
             // Check if a selectedVariant exists and use its price, otherwise default to a predefined value
-            return total + (item.price || item.variantPrice * item.quantity);
+            return total + (item.price * item.quantity);
         }, 0);
     };
     

@@ -37,24 +37,28 @@ const CartItem = ({ item }) => {
     }
 
     // Choose what to display: variant details or main product details
-    const imageUrl = item.variantImage || item?.images[0] || "https://divtech-project.s3.us-east-2.amazonaws.com/images/default_prod.png";
-    const price = item.variantPrice || item.price || mainProduct?.price;
+    const imageUrl = item?.images[0] || "https://divtech-project.s3.us-east-2.amazonaws.com/images/default_prod.png";
+    const price = item.price;
     const cartQuantity = item.quantity;
-    const productQuantity = item.variantQuantity || mainProduct?.quantity || mainProduct?.stockQuantity;
-    const title = item.title || mainProduct?.title;
+    const title = item.title;
     const size  = item.selectedSize || {};
+    const matchingVariant = item.variant?.find(variant => variant.variantValues[0].size === size);
+    console.log('match', matchingVariant);
+    // Use the quantity from the matching variant or default to the item's quantity
+    const productQuantity = matchingVariant ? matchingVariant.variantQuantity : item.quantity;
+
 
     const incrementQuantity = () => {
         if (cartQuantity < productQuantity) {
-            updateQuantity(item.cartItemId, 'increment');
+            updateQuantity(item.cartItemId, size, 'increment');
         } else {
             alert("You've reached the maximum available quantity for this item.");
         }
     };
-
+    
     const decrementQuantity = () => {
         if (cartQuantity > 1) {
-            updateQuantity(item.cartItemId, 'decrement');
+            updateQuantity(item.cartItemId, size, 'decrement');
         } else {
             alert("Minimum quantity reached. Remove the item if needed.");
         }

@@ -66,17 +66,28 @@ export const CartProvider = ({ children }) => {
     const updateQuantity = (cartItemId, selectedSize, changeType) => {
         setCart(currentCart => {
             const newCart = currentCart.map(item => {
-                // Check if the current item matches the cart item ID and the selected size
-                if (item.cartItemId === cartItemId && item.selectedSize === selectedSize) {
-                    let updatedQuantity = item.quantity;
+                // Log the current item to debug
+                console.log('i', item);
     
-                    if (changeType === 'increment') {
-                        updatedQuantity += 1;
-                    } else if (changeType === 'decrement' && updatedQuantity > 1) {
-                        updatedQuantity -= 1;
+                // Check if the current item matches the cart item ID
+                if (item.cartItemId === cartItemId) {
+                    // Ensure the item has a variant array and find the matching variant based on the selectedSize
+                    const variant = item.variant && item.variant.find(v => v.variantValues[0] && v.variantValues[0].size === selectedSize);
+                    console.log(variant);
+                    if (variant) {
+                        let updatedQuantity = item.quantity;
+    
+                        if (changeType === 'increment' && updatedQuantity < variant.variantQuantity) {
+                            updatedQuantity += 1;
+                        } else if (changeType === 'decrement' && updatedQuantity > 1) {
+                            updatedQuantity -= 1;
+                        }
+    
+                        // Update the item quantity only if it doesn't exceed the variant quantity
+                        if (updatedQuantity <= variant.variantQuantity) {
+                            return { ...item, quantity: updatedQuantity };
+                        }
                     }
-    
-                    return { ...item, quantity: updatedQuantity };
                 }
                 return item;
             }).filter(item => item.quantity > 0);
@@ -84,6 +95,8 @@ export const CartProvider = ({ children }) => {
             return newCart;
         });
     };
+    
+    
     
     
     
@@ -121,12 +134,12 @@ export const CartProvider = ({ children }) => {
 
     // Convert cart items to the format expected by your backend / Stripe
     const stripeCartItems = detailedCartItems.map(item => {
-        const id = item.variantValues?.[0]?._id || item._id;
+        const id = item._id;
         const title = item.title + (item.variantValues ? ` ${item.variantValues[0].color} ${item.variantValues[0].size}` : '') || item.title;
 
         // Logging the quantity for each item
         console.log(`Quantity for item ${id}:`, item.quantity);
-
+        console.log('size', item.selectedSize);
         return {
             id: id,
             name: title,
@@ -134,6 +147,7 @@ export const CartProvider = ({ children }) => {
             price: item.price,
             subtotal: subtotal,
             vendor: item.vendor,
+            size: item.selectedSize,
         };
     });
 
