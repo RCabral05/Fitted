@@ -13,6 +13,7 @@ export const Success = () => {
     const fetchedOrderDetailsRef = useRef(false);
 
     console.log('Success component is rendered');
+    console.log('Fix render issue, only call functions once');
 
     useEffect(() => {
         fetchStores();
