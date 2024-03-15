@@ -18,13 +18,10 @@ const router = express.Router();
 
 router.post("/api/add-product", multerUpload, async (req, res) => {
     const images = req.files['images'] || [];
-    const variantImages = req.files['variantImages'] || [];
     console.log('img', images);
-    console.log('vimg', variantImages);
 
     try {
         let uploadedImages = [];
-        let uploadedVariantImages = [];
 
         if (images.length > 0) {
             uploadedImages = await Promise.all(images.map(file => {
@@ -39,25 +36,6 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
                 });
             }));
         }
-
-        // Upload variant images
-        if (variantImages.length > 0) {
-            uploadedVariantImages = await Promise.all(variantImages.map(file => {
-                return new Promise((resolve, reject) => {
-                    uploadImage(file, (error, data) => {
-                        if (error) {
-                            reject(error);
-                        } else {
-                            resolve(data.Location);
-                        }
-                    });
-                });
-            }));
-        }
-
-        console.log('Uploaded images:', uploadedImages);
-        console.log('Uploaded variant images:', uploadedVariantImages);
-
 
         // Extract product data, variants, and tags from req.body
         let { variants = [], storeId, ...productData } = req.body;
@@ -85,7 +63,7 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
         await newProduct.save();
 
         // Handle variants
-        let updatedVariants = await handleVariants(variants, newProduct._id, uploadedVariantImages);
+        let updatedVariants = await handleVariants(variants, newProduct._id);
 
         // Update the product with saved variants
         newProduct.variant = updatedVariants.map(variant => variant._id);
@@ -117,7 +95,6 @@ async function handleVariants(variants, productId, uploadedVariantImages) {
         const variantData = {
             ...variant,
             productId: productId,
-            variantImage: uploadedVariantImages[index] || '',
             variantValues: {
                 color: variant.color || '',
                 size: variant.size || '',

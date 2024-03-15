@@ -42,7 +42,7 @@ const CartItem = ({ item }) => {
     const cartQuantity = item.quantity;
     const productQuantity = item.variantQuantity || mainProduct?.quantity || mainProduct?.stockQuantity;
     const title = item.title || mainProduct?.title;
-    const { color, size } = item.variantValues?.[0] || {};
+    const size  = item.selectedSize || {};
 
     const incrementQuantity = () => {
         if (cartQuantity < productQuantity) {
@@ -64,7 +64,7 @@ const CartItem = ({ item }) => {
         <div className="CartItem-container">
             <img className="CartItem-image" src={imageUrl} alt="Product" />
             <div className="CartItem-details">
-                <h3 className="CartItem-title">{title} - {color} {size}</h3>
+                <h3 className="CartItem-title">{title} - {size}</h3>
                 <p className="CartItem-price">${price.toFixed(2)}</p>
                 <p className="CartItem-price-total">Total: ${price * cartQuantity.toFixed(2)}</p>
                 <div className="CartItem-quantity-controls">

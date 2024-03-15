@@ -2,78 +2,85 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProducts } from '../../../context/ProductsContext';
 import { useCart } from '../../../context/CartContext';
-import './styles.css';
+import './styles.css'; // Ensure your CSS file is correctly imported
 
 export const ProductDetails = () => {
-    const { productId } = useParams();
-    const { fetchProductById } = useProducts();
-    const [product, setProduct] = useState(null);
-    const [selectedVariant, setSelectedVariant] = useState(null);
-    const [productNotFound, setProductNotFound] = useState(false);
-    const { addToCart } = useCart();
+  const { productId } = useParams();
+  const { fetchProductById } = useProducts();
+  const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const { addToCart } = useCart();
 
-    useEffect(() => {
-        const loadProduct = async () => {
-            try {
-                const fetchedProduct = await fetchProductById(productId);
-                setProduct(fetchedProduct);
-                setSelectedVariant(fetchedProduct?.variant[0] || null);
-            } catch (error) {
-                console.error("Error fetching product:", error);
-                setProductNotFound(true);
-            }
-        };
-
-        if (productId) {
-            loadProduct();
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const fetchedProduct = await fetchProductById(productId);
+        setProduct(fetchedProduct);
+        if (fetchedProduct && fetchedProduct.images.length > 0) {
+          setSelectedImage(fetchedProduct.images[0]);
         }
-    }, [productId, fetchProductById]);
-
-    const handleVariantClick = (variant) => {
-        setSelectedVariant(variant);
+        if (fetchedProduct && fetchedProduct.variant.length > 0) {
+          setSelectedSize(fetchedProduct.variant[0].variantValues[0].size);
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
     };
 
-    return (
-        <div className="product-details-container">
-            {product ? (
-                <div>
-                    <div className="product-slider">
-                        {product.images.map((image, index) => (
-                            <img key={index} src={image} alt={product.title} className="product-image" />
-                        ))}
-                    </div>
-                    <div className="product-info">
-                        <h2>{product.title}</h2>
-                        <p>{product.category} / {product.tags.map(tag => tag.name).join(' / ')}</p>
-                        <p>Description: {product.description}</p>
-                        <p>SKU: {selectedVariant ? selectedVariant.variantSku : product.sku}</p>
-                        <p>Price: ${selectedVariant ? selectedVariant.variantPrice : product.price}</p>
-                        <p>Quantity: {selectedVariant ? selectedVariant.variantQuantity : product.quantity}</p>
-                        <p>Vendor: {product.vendor}</p>
-                        <div className="product-tags">
-                            Tags: {product.tags.map(tag => <span key={tag._id} className="product-tag">{tag.name}</span>)}
-                        </div>
-                        <div className="product-variants">
-                            <h3>Variants:</h3>
-                            {product.variant.map((variant, index) => (
-                                <button key={variant._id} 
-                                        className="variant-button"
-                                        onClick={() => handleVariantClick(variant)}>
-                                    Variant {index + 1}
-                                </button>
-                            ))}
-                        </div>
-                        <button onClick={() => addToCart(selectedVariant || product)}>Add to Cart</button>
-                    </div>
-                    {selectedVariant && (
-                        <img src={selectedVariant.variantImage} alt="Selected Variant" className="selected-variant-image" />
-                    )}
-                </div>
-            ) : (
-                productNotFound ? <p>Product not found.</p> : <p>Loading product...</p>
-            )}
+    if (productId) {
+      loadProduct();
+    }
+  }, [productId, fetchProductById]);
+
+  const handleAddToCart = () => {
+    const itemToAdd = {
+      ...product,
+      selectedSize: selectedSize
+    };
+    addToCart(itemToAdd);
+  };
+
+  if (!product) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="product-details-container">
+      <div className="product-details-image-slider">
+        <img src={selectedImage} alt="Product" style={{ width: '100%', height: 'auto' }} />
+        <div className="product-details-thumbnail-container">
+          {product.images.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt="Thumbnail"
+              className="product-details-thumbnail"
+              onClick={() => setSelectedImage(image)}
+            />
+          ))}
         </div>
-    );
+      </div>
+      <div className="product-details-info">
+        <h1 className="product-details-title">{product.title}</h1>
+        <p className="product-details-description">{product.description}</p>
+        <strong className="product-details-price">Price: ${product.price}</strong>
+        <h3 className="product-details-size-heading">Select Size:</h3>
+        <div className="product-details-sizes">
+          {product.variant.map((variant, index) => (
+            <button 
+              key={index} 
+              className={`product-details-size-button ${selectedSize === variant.variantValues[0].size ? 'product-details-selected-size' : ''}`}
+              onClick={() => setSelectedSize(variant.variantValues[0].size)}
+            >
+              {variant.variantValues[0].size}
+            </button>
+          ))}
+        </div>
+      </div>
+      <button className="product-details-add-to-cart" onClick={handleAddToCart}>Add to Cart</button>
+    </div>
+  );
 };
 
 export default ProductDetails;

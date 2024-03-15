@@ -32,10 +32,6 @@ const ProductSchema = new Schema({
   sku: {
     type: Number,
   },
-  quantity: {
-    type: Number,
-    default: 0
-  },
   variant: [{
     type: Schema.Types.ObjectId,
     ref: 'Variants'
@@ -69,18 +65,6 @@ const VariantSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Product',
     // required: true
-  },
-  variantImage: {
-    type: String
-  },
-  variantPrice: {
-    type: Number,
-  },
-  variantCostPerItem: {
-    type: Number
-  },
-  variantSku: {
-    type: Number
   },
   variantQuantity: {
     type: Number,

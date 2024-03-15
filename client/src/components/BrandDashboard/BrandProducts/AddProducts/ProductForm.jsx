@@ -34,9 +34,6 @@ export function ProductForm({ product, handleChange, handleFileChange, removeIma
       <label>Sku:
           <input type="number" name="sku" value={product.sku} onChange={handleChange} required />
       </label>
-      <label>Quantity:
-          <input type="number" name="quantity" value={product.quantity} onChange={handleChange} />
-      </label>
       <label>Vendor:
           <input type="text" name="vendor" value={product.vendor} onChange={handleChange} required />
       </label>

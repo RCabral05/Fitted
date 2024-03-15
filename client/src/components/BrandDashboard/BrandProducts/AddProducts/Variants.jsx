@@ -152,38 +152,6 @@ export function Variants({
                     {variantCombinations?.map((variant, index) => (
                         <div key={index} className="variant-combination-section">
                             <p>Variant Combination: {JSON.stringify(variant.color + '/' + variant.size)}</p>
-                            <label>Variant Price:
-                                <input
-                                    type="number"
-                                    name="variantPrice"
-                                    value={variant.variantPrice || ''}
-                                    onChange={(e) => handleVariantInputChange(index, e)}
-                                />
-                            </label>
-                            <label>Variant Compare At Price:
-                                <input
-                                    type="number"
-                                    name="variantCompareAtPrice"
-                                    value={variant.variantCompareAtPrice || ''}
-                                    onChange={(e) => handleVariantInputChange(index, e)}
-                                />
-                            </label>
-                            <label>Variant Cost Per Item:
-                                <input
-                                    type="number"
-                                    name="variantCostPerItem"
-                                    value={variant.variantCostPerItem || ''}
-                                    onChange={(e) => handleVariantInputChange(index, e)}
-                                />
-                            </label>
-                            <label>Variant SKU:
-                                <input
-                                    type="text"
-                                    name="variantSku"
-                                    value={variant.variantSku || ''}
-                                    onChange={(e) => handleVariantInputChange(index, e)}
-                                />
-                            </label>
                             <label>Variant Quantity:
                                 <input
                                     type="number"
@@ -191,15 +159,6 @@ export function Variants({
                                     value={variant.variantQuantity || ''}
                                     onChange={(e) => handleVariantInputChange(index, e)}
                                 />
-                            </label>
-                            <label>Variant Image:
-                                <input
-                                    type="file"
-                                    onChange={(e) => handleVariantFileChange(index, e)}
-                                />
-                                {variant.variantImagePreview && (
-                                    <img src={variant.variantImagePreview} alt="Variant Preview" style={{ width: '100px', height: 'auto' }} />
-                                )}
                             </label>
                         </div>
                     ))}

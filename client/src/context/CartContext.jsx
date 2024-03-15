@@ -33,24 +33,27 @@ export const CartProvider = ({ children }) => {
     const addToCart = (product) => {
         console.log('added to cart', product);
         setCart(currentCart => {
-            // Find if the product is already in the cart based on its unique ID
-            const existingProductIndex = currentCart.findIndex(item => item._id === product._id);
+            // Find if the product with the same size is already in the cart
+            const existingProductIndex = currentCart.findIndex(item => 
+                item._id === product._id && item.selectedSize === product.selectedSize
+            );
     
             let newCart;
             if (existingProductIndex >= 0) {
-                // Product exists, increment the quantity
+                // Product with the same size exists, increment the quantity
                 newCart = [...currentCart];
                 newCart[existingProductIndex].quantity += 1;
             } else {
-                // Product doesn't exist, add to the cart with a quantity of 1
+                // Product with this size doesn't exist, add to the cart with a quantity of 1
                 const uniqueId = new Date().getTime(); // Use current timestamp for uniqueness
                 newCart = [...currentCart, { ...product, quantity: 1, cartItemId: uniqueId }];
             }
     
             return newCart;
         });
-        console.log('cart', cart);
+        // Note: Logging here might not reflect the update immediately due to the async nature of setState
     };
+    
     
 
     useEffect(() => {
@@ -60,25 +63,28 @@ export const CartProvider = ({ children }) => {
     
     
 
-    const updateQuantity = (cartItemId, changeType) => {
+    const updateQuantity = (cartItemId, selectedSize, changeType) => {
         setCart(currentCart => {
             const newCart = currentCart.map(item => {
-                console.log(item);
-                if (item.cartItemId === cartItemId) {
+                // Check if the current item matches the cart item ID and the selected size
+                if (item.cartItemId === cartItemId && item.selectedSize === selectedSize) {
                     let updatedQuantity = item.quantity;
+    
                     if (changeType === 'increment') {
                         updatedQuantity += 1;
-                    } else if (changeType === 'decrement' && item.quantity > 1) {
+                    } else if (changeType === 'decrement' && updatedQuantity > 1) {
                         updatedQuantity -= 1;
                     }
+    
                     return { ...item, quantity: updatedQuantity };
                 }
                 return item;
             }).filter(item => item.quantity > 0);
-            console.log('updating', newCart); // Log the new cart to see if it's updated
+    
             return newCart;
         });
     };
+    
     
     
 

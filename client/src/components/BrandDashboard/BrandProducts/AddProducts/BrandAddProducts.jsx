@@ -170,7 +170,6 @@ export function BrandAddProducts({ initialData, store }) {
         formData.append('status', product.status);
         formData.append('price', product.price);
         formData.append('sku', product.sku);
-        formData.append('quantity', product.quantity);
         formData.append('vendor', product.vendor);
         formData.append('collection', product.collection);
         formData.append('category', product.category);
@@ -185,14 +184,8 @@ export function BrandAddProducts({ initialData, store }) {
         // Append variant information
         variantCombinations.forEach((variant, index) => {
             Object.entries(variant).forEach(([key, value]) => {
-                if (key !== 'variantImageFile' && key !== 'variantImagePreview') {
-                    formData.append(`variants[${index}][${key}]`, value);
-                }
+                formData.append(`variants[${index}][${key}]`, value);
             });
-            
-            if (variant.variantImageFile) {
-                formData.append('variantImages', variant.variantImageFile);
-            }
         });
     
         try {
@@ -228,7 +221,6 @@ export function BrandAddProducts({ initialData, store }) {
                variantCombinations={variantCombinations}
                setVariantCombinations={setVariantCombinations}
                handleVariantInputChange={handleVariantInputChange}
-               handleVariantFileChange={handleVariantFileChange}
             />
             <button type="submit">Submit</button>
         </form>

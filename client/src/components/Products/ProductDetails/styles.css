@@ -1,50 +1,72 @@
-/* styles.css */
-
 .product-details-container {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-}
-
-.product-slider {
     display: flex;
-    overflow-x: auto;
-}
-
-.product-image {
-    max-width: 100%;
-    height: auto;
-    margin-right: 10px;
-}
-
-.product-info {
-    background-color: #fff;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.product-tag {
-    display: inline-block;
-    background-color: #eee;
-    padding: 5px 10px;
-    border-radius: 15px;
-    margin-right: 5px;
-}
-
-.variant-button {
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f8f8f8;
+  }
+  
+  .product-details-image-slider {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .product-details-thumbnail-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .product-details-thumbnail {
+    width: 50px;
     cursor: pointer;
-    margin-right: 5px;
-}
-
-.selected-variant-image {
-    max-width: 100%;
-    height: auto;
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
+    transition: transform 0.2s;
+  }
+  
+  .product-details-thumbnail:hover {
+    transform: scale(1.1);
+  }
+  
+  .product-details-info {
+    text-align: center;
+  }
+  
+  .product-details-title, .product-details-description, .product-details-price {
+    margin-bottom: 10px;
+  }
+  
+  .product-details-sizes {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .product-details-size-button {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .product-details-selected-size {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .product-details-add-to-cart {
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  @media (min-width: 768px) {
+    .product-details-container {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  
+    .product-details-image-slider, .product-details-info {
+      flex: 1;
+    }
+  }
+  
