@@ -115,43 +115,44 @@ export const CartProvider = ({ children }) => {
 
     const checkout = async (subtotal) => {
         console.log('Proceeding to checkout with cart items:', cart);
-    let detailedCartItems = [];
+        let detailedCartItems = [];
 
-    for (const item of cart) {
-        if (item.productId) {
-            try {
-                const productDetails = await fetchProductById(item.productId);
-                detailedCartItems.push({ ...productDetails, ...item });  // Ensuring cart item's quantity is preserved
-            } catch (error) {
-                console.error('Error fetching product details:', error);
+        for (const item of cart) {
+            if (item.productId) {
+                try {
+                    const productDetails = await fetchProductById(item.productId);
+                    detailedCartItems.push({ ...productDetails, ...item });  // Ensuring cart item's quantity is preserved
+                } catch (error) {
+                    console.error('Error fetching product details:', error);
+                }
+            } else {
+                detailedCartItems.push(item);
             }
-        } else {
-            detailedCartItems.push(item);
         }
-    }
 
-    console.log('Detailed cart items:', detailedCartItems);
+        console.log('Detailed cart items:', detailedCartItems);
 
-    // Convert cart items to the format expected by your backend / Stripe
-    const stripeCartItems = detailedCartItems.map(item => {
-        const id = item._id;
-        const title = item.title + (item.variantValues ? ` ${item.variantValues[0].color} ${item.variantValues[0].size}` : '') || item.title;
+        // Convert cart items to the format expected by your backend / Stripe
+        const stripeCartItems = detailedCartItems.map(item => {
+            const id = item._id;
+            const title = item.title + (item.variantValues ? ` ${item.variantValues[0].color} ${item.variantValues[0].size}` : '') || item.title;
 
-        // Logging the quantity for each item
-        console.log(`Quantity for item ${id}:`, item.quantity);
-        console.log('size', item.selectedSize);
-        return {
-            id: id,
-            name: title,
-            quantity: item.quantity,  // Directly using the quantity from the item
-            price: item.price,
-            subtotal: subtotal,
-            vendor: item.vendor,
-            size: item.selectedSize,
-        };
-    });
+            // Logging the quantity for each item
+            console.log(`Quantity for item ${id}:`, item.quantity);
+            console.log('size', item.selectedSize);
+            return {
+                id: id,
+                name: title,
+                quantity: item.quantity,  // Directly using the quantity from the item
+                price: item.price,
+                subtotal: subtotal,
+                vendor: item.vendor,
+                size: item.selectedSize,
+                storeId: item.storeId,
+            };
+        });
 
-    console.log('Stripe cart items:', stripeCartItems);
+        console.log('Stripe cart items:', stripeCartItems);
     
         try {
             const stripe = await stripePromise;

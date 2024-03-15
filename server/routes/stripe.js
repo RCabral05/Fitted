@@ -29,6 +29,7 @@ router.post('/create-checkout-session', async (req, res) => {
                     vendor: item.vendor,
                     size: item.size,
                     productId: item.id,
+                    storeId: item.storeId
                   } // Assuming 'name' is a property of your item
                   // Include any other product data needed by Stripe or your application
               },
@@ -105,9 +106,11 @@ router.get('/api/order-details', async (req, res) => {
                 const productId = item.price.product.metadata.productId; // Or however you reference your product ID
                 const size = item.price.product.metadata.size;
                 const quantityPurchased = item.quantity;
+                const storeId = item.price.product.metadata.storeId;
                 // Update the product quantity in your database
                 // This is a pseudo-function, replace it with your actual database update logic
                 await updateProductQuantity(productId, size, quantityPurchased);
+                await createOrder(productId, size, quantityPurchased, storeId);
             }
   
             res.json({ session, additionalData: 'Order processed successfully' });
@@ -122,32 +125,25 @@ router.get('/api/order-details', async (req, res) => {
   });
   
   async function updateProductQuantity(productId, size, quantityPurchased) {
-    console.log("Starting updateProductQuantity with:", { productId, size, quantityPurchased });
 
     try {
         // Retrieve the product by its ID
-        console.log(`Retrieving product with ID: ${productId}`);
         const product = await Products.findById(productId).populate('variant');
 
         if (!product) {
-            console.log('Product not found.');
             throw new Error('Product not found.');
         }
 
-        console.log(`Product found: ${product.title}`);
-        console.log(`Total variants to check: ${product.variant.length}`);
-
+       
         // Initialize the variable to store the variant to update
         let variantToUpdate = null;
 
         // Iterate over the array of variant IDs in the product
         for (let variantId of product.variant) {
-            console.log(`Checking variant ID: ${variantId}`);
             let variant = await Variants.findById(variantId);
 
             // Ensure the variant exists and has the specified size
             if (variant && variant.variantValues[0].size === size) {
-                console.log(`Variant with matching size found: ${size}`);
                 variantToUpdate = variant;
                 break;
             }
@@ -155,27 +151,32 @@ router.get('/api/order-details', async (req, res) => {
 
         // Check if the variant to update has been found
         if (!variantToUpdate) {
-            console.log('Variant with specified size not found.');
             throw new Error('Variant with specified size not found.');
         }
 
         // Verify there's enough stock to fulfill the order
-        console.log(`Current stock for the variant: ${variantToUpdate.variantQuantity}`);
         if (variantToUpdate.variantQuantity < quantityPurchased) {
-            console.log('Not enough stock for the requested quantity.');
             throw new Error('Not enough stock for the requested quantity.');
         }
 
         // Update the variant quantity
-        console.log(`Updating quantity from ${variantToUpdate.variantQuantity} to ${variantToUpdate.variantQuantity - quantityPurchased}`);
         variantToUpdate.variantQuantity -= quantityPurchased;
         await variantToUpdate.save();
-        console.log(`Updated quantity successfully. New quantity: ${variantToUpdate.variantQuantity}`);
 
         return { success: true, message: "Product quantity updated successfully." };
     } catch (error) {
         console.error("Error updating product quantity:", error);
         throw error; // Rethrow the error or handle it as needed
+    }
+}
+
+async function createOrder(productId, size, quantityPurchased, storeId) {
+    console.log("Starting create Order with:", { productId, size, quantityPurchased, storeId });
+
+    try {
+       
+    } catch (error) {
+        
     }
 }
 
