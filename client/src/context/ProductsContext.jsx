@@ -7,6 +7,7 @@ export const useProducts = () => useContext(ProductsContext);
 
 export const ProductsProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
+    const [activeProducts, setActiveProducts] = useState([]);
     const [tags, setTags] = useState([]);
     const [storeProducts, setStoreProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // State to manage loading status
@@ -57,16 +58,17 @@ export const ProductsProvider = ({ children }) => {
 
 
     const fetchActiveProducts = useCallback(async () => {
-        setIsLoading(true); // Start loading
+        setIsLoading(true);
         try {
             const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/active-products`);
-            setProducts(response.data);
+            setActiveProducts(response.data);
         } catch (error) {
             console.error('Error fetching active products:', error);
         } finally {
-            setIsLoading(false); // End loading
+            setIsLoading(false);
         }
     }, []);
+      
 
     useEffect(() => {
         fetchActiveProducts();
@@ -130,6 +132,7 @@ export const ProductsProvider = ({ children }) => {
             fetchProductById,
             fetchTags,
             fetchActiveProducts,
+            activeProducts,
         }}>
             {children}
         </ProductsContext.Provider>

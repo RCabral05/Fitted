@@ -4,19 +4,14 @@ import { ProductList } from './ProductList/ProductList';
 import './styles.css';
 
 export const Products = () => {
-  const { fetchActiveProducts, products } = useProducts();
-  const [isLoading, setIsLoading] = useState(false); // State to track loading status
-  console.log(products);
+  const { fetchActiveProducts, activeProducts } = useProducts();
+  const [isLoading, setIsLoading] = useState(true); // State to track loading status
+  console.log(activeProducts);
   useEffect(() => {
     const loadProducts = async () => {
-      try {
-        setIsLoading(true); // Set loading to true before fetching data
-        await fetchActiveProducts();
-      } catch (error) {
-        console.error('Error fetching active products:', error);
-      } finally {
-        setIsLoading(false); // Set loading to false after fetching data
-      }
+      setIsLoading(true);
+      await fetchActiveProducts();
+      setIsLoading(false);
     };
 
     loadProducts();
@@ -27,7 +22,7 @@ export const Products = () => {
       {isLoading ? (
         <div>Loading products...</div> // Display loading message or spinner
       ) : (
-        <ProductList products={products} />
+        <ProductList products={activeProducts} />
       )}
     </div>
   );
