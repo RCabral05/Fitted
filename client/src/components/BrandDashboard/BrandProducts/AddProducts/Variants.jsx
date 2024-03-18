@@ -21,13 +21,7 @@ const generateVariantCombinations = (options) => {
     console.log(combinations);
     // Map the combinations to an object with option names as keys
     return combinations.map((combination) => ({
-        variantPrice: '',
-        variantCompareAtPrice: '',
-        variantCostPerItem: '',
-        variantSku: '',
         variantQuantity: '',
-        variantImageFile: null,
-        variantImagePreview: '',
         ...combination.reduce((acc, value, index) => ({
             ...acc,
             [options[index].name]: value,

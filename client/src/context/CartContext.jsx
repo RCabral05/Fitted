@@ -73,7 +73,7 @@ export const CartProvider = ({ children }) => {
                 if (item.cartItemId === cartItemId) {
                     // Ensure the item has a variant array and find the matching variant based on the selectedSize
                     const variant = item.variant && item.variant.find(v => v.variantValues[0] && v.variantValues[0].size === selectedSize);
-                    console.log(variant);
+                    console.log('var', variant);
                     if (variant) {
                         let updatedQuantity = item.quantity;
     

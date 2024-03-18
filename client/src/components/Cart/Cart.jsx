@@ -37,7 +37,7 @@ export const Cart = () => {
                 {cart.length === 0 ? (
                     <p className="Cart-empty-message">Your cart is empty. <span onClick={startShopping} style={{ color: 'rgb(49, 180, 255)', textDecoration: 'underline', cursor: 'pointer' }}>Start Shopping!</span></p>
                 ) : (
-                    cart.map((item) => <CartItem key={item.cartItemId} item={item} />)
+                    cart.map((item) => <CartItem key={item?.cartItemId} item={item} />)
                 )}
             </div>
             {cart.length > 0 && (

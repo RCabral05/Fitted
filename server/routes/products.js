@@ -32,7 +32,7 @@ cron.schedule('* * * * *', async () => {
 
 router.post("/api/add-product", multerUpload, async (req, res) => {
     const images = req.files['images'] || [];
-    console.log('img', images);
+    // console.log('img', images);
 
     try {
         let uploadedImages = [];
@@ -82,6 +82,7 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
         // Update the product with saved variants
         newProduct.variant = updatedVariants.map(variant => variant._id);
         await newProduct.save();
+        console.log(newProduct);
 
         res.status(201).send({ message: "Product and variants added successfully", product: newProduct });
     } catch (error) {
@@ -103,20 +104,20 @@ async function handleTags(tags) {
 }
 
 // Handle the creation of variants
-async function handleVariants(variants, productId, uploadedVariantImages) {
+async function handleVariants(variants, productId) {
     return await Promise.all(variants.map(async (variant, index) => {
-        console.log('Processing variant:', variant);
+        // console.log('Processing variant:', variant);
         const variantData = {
             ...variant,
             productId: productId,
             variantValues: {
                 color: variant.color || '',
-                size: variant.size || '',
+                size: variant.Size || '',
                 style: variant.style || '',
                 material: variant.material || '',
             }
         };
-        console.log('Variant data with image:', variantData);
+        // console.log('Variant data:', variantData);
         const newVariant = new Variants(variantData);
         const savedVariant = await newVariant.save();
         console.log('Saved variant:', savedVariant);
@@ -137,6 +138,20 @@ router.get('/api/products', async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch all products', error: error.toString() });
     }
 });
+
+// Assuming this is in your Express router setup file
+
+router.get('/api/active-products', async (req, res) => {
+    try {
+        // Fetch only the products that have a status of 'active'
+        const activeProducts = await Products.find({ status: 'active' });
+        res.json(activeProducts);
+    } catch (error) {
+        console.error('Error fetching active products:', error);
+        res.status(500).json({ message: 'Failed to fetch active products', error: error.toString() });
+    }
+});
+
 
 
 router.get('/api/products/store/:storeId', async (req, res) => {

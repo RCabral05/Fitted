@@ -9,6 +9,7 @@ export const ProductsProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [tags, setTags] = useState([]);
     const [storeProducts, setStoreProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(false); // State to manage loading status
 
 
     const fetchProducts = useCallback(async () => {
@@ -53,6 +54,23 @@ export const ProductsProvider = ({ children }) => {
             throw error; // It's usually a good practice to rethrow the error for further handling
         }
     }, []);
+
+
+    const fetchActiveProducts = useCallback(async () => {
+        setIsLoading(true); // Start loading
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/active-products`);
+            setProducts(response.data);
+        } catch (error) {
+            console.error('Error fetching active products:', error);
+        } finally {
+            setIsLoading(false); // End loading
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchActiveProducts();
+    }, [fetchActiveProducts]);
     
 
     const updateProduct = useCallback(async (id, updatedData) => {
@@ -111,6 +129,7 @@ export const ProductsProvider = ({ children }) => {
             deleteProduct,
             fetchProductById,
             fetchTags,
+            fetchActiveProducts,
         }}>
             {children}
         </ProductsContext.Provider>

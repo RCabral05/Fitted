@@ -18,7 +18,7 @@ export function BrandAddProducts({ initialData, store }) {
     const [product, setProduct] = useState(initialData || {
         title: '',
         description: '',
-        status: 'available',
+        status: 'active',
         imageFiles: [],
         imagePreviews: [],
         price: '',
