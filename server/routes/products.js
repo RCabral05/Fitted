@@ -145,7 +145,8 @@ router.get('/api/products', async (req, res) => {
 router.get('/api/active-products', async (req, res) => {
     try {
         // Fetch only the products that have a status of 'active'
-        const activeProducts = await Products.find({ status: 'active' });
+        const activeProducts = await Products.find({ status: 'active' }).populate('variant')
+                                                                            .populate('tags');
         res.json(activeProducts);
     } catch (error) {
         console.error('Error fetching active products:', error);
