@@ -184,6 +184,7 @@ export function BrandAddProducts({ initialData, store }) {
         }
         // Append the main product images
         product.imageFiles.forEach(file => formData.append('images', file));
+
     
         // Append variant information
         variantCombinations.forEach((variant, index) => {

@@ -30,19 +30,26 @@ const s3 = new S3({
 
 export { multerUpload };
 
-export function uploadImage(image, onUploadComplete, isVariantImage = false) {
+export function uploadImage(storeId, image, onUploadComplete, isVariantImage = false) {
   console.log("Starting upload...", image.originalname);
   
   // Determine the directory based on whether the image is a variant image
   const directory = isVariantImage ? 'variantImages' : 'images';
-  
+  const filePath = `${storeId}/${directory}/${image.originalname}`;
   const params = {
       Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
-      Key: `${directory}/${image.originalname}`, // Use the directory variable here
+      Key: filePath, // Use the directory variable here
       Body: image.buffer,
       ContentType: "image/jpeg",
   };
 
-  s3.upload(params, onUploadComplete);
+  s3.upload(params, (err, data) => {
+    if (err) {
+      console.error("Error uploading file:", err);
+      return onUploadComplete(err, null);
+    }
+    console.log("Upload success:", data.Location);
+    onUploadComplete(null, data);
+  });
 }
 

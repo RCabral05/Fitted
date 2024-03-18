@@ -34,7 +34,8 @@ const ProductSchema = new Schema({
   },
   variant: [{
     type: Schema.Types.ObjectId,
-    ref: 'Variants'
+    ref: 'Variants',
+    required: true
   }],
   vendor: {
     type: String,
@@ -71,7 +72,8 @@ const VariantSchema = new Schema({
   },
   variantQuantity: {
     type: Number,
-    default: 0
+    default: 0,
+    required: true
   },
   variantName: {
     type: String,

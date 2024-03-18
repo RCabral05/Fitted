@@ -1,11 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMyAdmin } from "../../context/MyAdminContext";
+import { useStores } from "../../context/StoreContext";
 
 export const MyAdmin = () => {
   const [tagName, setTagName] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { createTag, tags, editTag, deleteTag } = useMyAdmin();
+  const { createTag, tags, editTag, deleteTag, fetchFilesForStore, files } = useMyAdmin();
   console.log(tags);
+  const { stores } = useStores();
+  console.log(stores);
+
+
+  useEffect(() => {
+      if (stores.length > 0) {
+          stores.forEach(store => {
+              fetchFilesForStore(store._id);
+          });
+      }
+  }, [stores, fetchFilesForStore]);
+
+  
   const handleSubmit = async (e) => {
       e.preventDefault();
       if (!tagName) return; // simple validation
@@ -55,6 +69,21 @@ export const MyAdmin = () => {
               </div>
             ))}
           </div>
+          <div>
+            <h2>Files from S3</h2>
+            {Object.entries(files).map(([storeId, storeFiles]) => (
+                <div key={storeId}>
+                    <h3>Files for store {storeId}</h3>
+                    <ul>
+                        {storeFiles.map(file => (
+                            <li key={file.key}>
+                                <a href={file.url} target="_blank" rel="noopener noreferrer">{file.key}</a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))}
+        </div>
       </div>
   );
 };

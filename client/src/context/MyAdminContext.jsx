@@ -7,6 +7,26 @@ export const useMyAdmin = () => useContext(MyAdminContext);
 
 export const MyAdminProvider = ({ children }) => {
     const [tags, setTags] = useState([]);
+    const [files, setFiles] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const fetchFilesForStore = useCallback(async (storeId) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/files?storeId=${storeId}`);
+            // Update your state based on storeId
+            setFiles(prevFiles => ({
+                ...prevFiles,
+                [storeId]: response.data // Assuming the response.data is the array of file objects
+            }));
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching files:', error);
+            setLoading(false);
+        }
+    }, [setFiles]);
+    
+    
 
     const createTag = useCallback(async (tagName) => {
         try {
@@ -48,10 +68,11 @@ export const MyAdminProvider = ({ children }) => {
 
     useEffect(() => {
         fetchTags(); // Fetch tags when the component mounts
-    }, [fetchTags]);
+        fetchFilesForStore();
+    }, [fetchTags, fetchFilesForStore]);
 
     return (
-        <MyAdminContext.Provider value={{ tags, createTag, editTag, deleteTag }}>
+        <MyAdminContext.Provider value={{ tags, createTag, editTag, deleteTag, fetchFilesForStore, files }}>
             {children}
         </MyAdminContext.Provider>
     );

@@ -1,7 +1,46 @@
 import express from "express";
 import Tags from '../models/Tags.js';
+import AWS from 'aws-sdk';
 
 const router = express.Router();
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_AWS_SECRET_KEY,
+    // region: process.env.AWS_REGION,
+});
+
+router.get('/api/files', async (req, res) => {
+    const storeId = req.query.storeId;
+
+    if (!storeId) {
+        return res.status(400).send('storeId query parameter is required');
+    }
+
+    const params = {
+        Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+        Prefix: `${storeId}/images/`, // List objects within storeId/images/
+    };
+
+    try {
+        const data = await s3.listObjectsV2(params).promise();
+        
+        // Define the files after fetching the data from S3
+        const files = data.Contents.map(file => {
+            return { key: file.Key, url: `https://${params.Bucket}.s3.amazonaws.com/${file.Key}` };
+        });
+
+        // Now it's safe to log the files variable
+        console.log('Files:', files);
+
+        res.json(files);
+    } catch (err) {
+        console.error('S3 Error:', err);
+        res.status(500).send('Error fetching files from S3');
+    }
+});
+
+
 
 //Add tags in MyAdmin
 router.post('/api/tags', async (req, res) => {

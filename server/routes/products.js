@@ -33,6 +33,10 @@ cron.schedule('* * * * *', async () => {
 router.post("/api/add-product", multerUpload, async (req, res) => {
     const images = req.files['images'] || [];
     // console.log('img', images);
+    let { variants = [], storeId, ...productData } = req.body;
+    if (!storeId) {
+        return res.status(400).send({ message: "storeId is required" });
+    }
 
     try {
         let uploadedImages = [];
@@ -40,7 +44,7 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
         if (images.length > 0) {
             uploadedImages = await Promise.all(images.map(file => {
                 return new Promise((resolve, reject) => {
-                    uploadImage(file, (error, data) => {
+                    uploadImage(storeId, file, (error, data) => {
                         if (error) {
                             reject(error);
                         } else {
@@ -52,10 +56,7 @@ router.post("/api/add-product", multerUpload, async (req, res) => {
         }
 
         // Extract product data, variants, and tags from req.body
-        let { variants = [], storeId, ...productData } = req.body;
-        if (!storeId) {
-            return res.status(400).send({ message: "storeId is required" });
-        }
+      
         productData.images = uploadedImages;
         productData.storeId = storeId;
         // Parse tags if they are stringified
