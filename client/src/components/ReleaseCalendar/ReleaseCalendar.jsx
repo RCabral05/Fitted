@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useProducts } from '../../context/ProductsContext'; // Adjust the import path as necessary
 import ReleasingProduct from './ReleasingProduct/ReleasingProduct'; // Adjust the import path as necessary
+import './styles.css';
 
 export const ReleaseCalendar = () => {
     const { products } = useProducts();
@@ -45,7 +46,7 @@ export const ReleaseCalendar = () => {
     };
 
     return (
-        <div className="calendar">
+        <div className="releasing-product-container">
             <h2>Scheduled Releases</h2>
             {viewSelectedProduct ? (
                 <>
@@ -56,7 +57,9 @@ export const ReleaseCalendar = () => {
                 Object.keys(productsGroupedByMonth).length > 0 ? (
                     Object.entries(productsGroupedByMonth).map(([month, products]) => (
                         <div key={month}>
-                            <h3>{month}</h3>
+                            <h3>------------------------------
+                                 {month} 
+                                 ------------------------------</h3>
                             <ul>
                                 {products.map(product => (
                                     <li key={product._id} onClick={() => handleProductClick(product)}>

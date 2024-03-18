@@ -1,0 +1,54 @@
+/* ReleasingProduct.css */
+
+.releasing-product-container {
+    max-width: 800px; /* Max width, but you can adjust it */
+    margin: 0 auto; /* Center the container */
+    padding: 1rem; /* Padding around the content */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+}
+
+.releasing-product-container img {
+    width: 100%; /* Make image responsive */
+    max-width: 400px; /* You can adjust this or remove it depending on your design */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Remove inline spacing */
+    margin: 0 auto; /* Center the image */
+}
+
+.releasing-product-container h3 {
+    font-size: 1.5em; /* Adjust title size */
+    text-align: center; /* Center align the title */
+    margin: 0.5em 0; /* Margin for spacing */
+}
+
+.releasing-product-container p {
+    font-size: 1em; /* Adjust paragraph size */
+    text-align: justify; /* Justify text for better readability */
+    margin-bottom: 1em; /* Margin for spacing */
+}
+
+@media (max-width: 768px) {
+    /* Styles for tablet and below */
+    .releasing-product-container {
+        padding: 0.5rem;
+    }
+
+    .releasing-product-container h3 {
+        font-size: 1.2em;
+    }
+
+    .releasing-product-container p {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Styles for mobile and below */
+    .releasing-product-container h3 {
+        font-size: 1em;
+    }
+
+    .releasing-product-container p {
+        font-size: 0.8em;
+    }
+}
