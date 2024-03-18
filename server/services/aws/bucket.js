@@ -53,3 +53,26 @@ export function uploadImage(storeId, image, onUploadComplete, isVariantImage = f
   });
 }
 
+
+export function deleteImage(imageUrl) {
+  // Extract the key from the URL
+  const urlParts = imageUrl.split('.com/');
+  const key = urlParts[1];
+  console.log('key', key);
+
+  const params = {
+    Bucket: process.env.REACT_APP_AWS_BUCKET_NAME,
+    Key: key,
+  };
+
+  s3.deleteObject(params, (err, data) => {
+    if (err) {
+      console.error("Error deleting file:", err);
+    } else {
+      console.log("File deleted successfully", data);
+    }
+  });
+}
+
+
+

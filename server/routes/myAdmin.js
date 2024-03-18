@@ -31,7 +31,6 @@ router.get('/api/files', async (req, res) => {
         });
 
         // Now it's safe to log the files variable
-        console.log('Files:', files);
 
         res.json(files);
     } catch (err) {

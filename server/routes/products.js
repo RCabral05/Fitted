@@ -6,7 +6,7 @@ import Models from "../models/Products.js";
 import Tags from '../models/Tags.js';
 import cron from 'node-cron';
 
-import { multerUpload, uploadImage } from '../services/aws/bucket.js';
+import { multerUpload, uploadImage, deleteImage } from '../services/aws/bucket.js';
 
 
 const { Products, Variants } = Models;
@@ -222,18 +222,26 @@ router.put('/api/products/:id', async (req, res) => {
 router.delete('/api/products/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedProduct = await Products.findByIdAndDelete(id);
+        const product = await Products.findById(id);
 
-        if (!deletedProduct) {
+        if (!product) {
             return res.status(404).send({ message: "Product not found" });
         }
 
-        res.send({ message: "Product deleted successfully" });
+        if (product.images && product.images.length > 0) {
+            product.images.forEach(imageUrl => {
+                deleteImage(imageUrl);
+            });
+        }
+
+        await Products.findByIdAndDelete(id);
+        res.send({ message: "Product and associated images deleted successfully" });
     } catch (error) {
         console.error('Error deleting product:', error);
         res.status(500).send({ message: "Failed to delete product", error: error.toString() });
     }
 });
+
 
 //TAGS
 //
