@@ -21,6 +21,7 @@ export const Navbar = () => {
     { text: 'All Stores', path: '/all-stores' },
     { text: 'Cart', path: '/cart' },
     { text: 'MyAdmin', path: '/MyAdmin' },
+    { text: 'Releases', path: '/release-calendar'}
   ];
 
   return (

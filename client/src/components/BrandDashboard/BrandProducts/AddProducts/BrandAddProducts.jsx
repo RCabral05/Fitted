@@ -28,7 +28,8 @@ export function BrandAddProducts({ initialData, store }) {
         collection: '',
         category: '',
         tags: [],
-        variants: []
+        variants: [],
+        scheduledDate: '',
     });
 
     useEffect(() => {
@@ -178,6 +179,9 @@ export function BrandAddProducts({ initialData, store }) {
         // Stringify the array of tags
         formData.append('tags', JSON.stringify(selectedTags));
     
+        if (product.status === 'scheduled' && product.scheduledDate) {
+            formData.append('scheduledDate', product.scheduledDate);
+        }
         // Append the main product images
         product.imageFiles.forEach(file => formData.append('images', file));
     

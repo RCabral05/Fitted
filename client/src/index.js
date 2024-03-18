@@ -25,6 +25,9 @@ import CartPage from "./pages/WebsitePages/CartPage";
 import MyAdminPage from "./pages/MyAdmin/MyAdminPage";
 import PaymentCanceled from "./pages/WebsitePages/PaymentCanceled";
 import PaymentSuccessful from "./pages/WebsitePages/PaymentSuccessful";
+import ReleaseCalendarPage from "./pages/WebsitePages/ReleaseCalendarPage";
+
+
 // Create root element
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
@@ -50,6 +53,7 @@ root.render(
                     <Route path="/all-stores" element={<AllStoresPage />} />
                     <Route path="/Cart" element={<CartPage />} />
                     <Route path="/MyAdmin" element={<MyAdminPage />} />
+                    <Route path="/release-calendar" element={<ReleaseCalendarPage />} />
                     <Route path="/brand-dashboard" element={<BrandDashboardPage />} />
                     <Route path="/success" element={<PaymentSuccessful />} />
                     <Route path="/cancel" element={<PaymentCanceled />} />

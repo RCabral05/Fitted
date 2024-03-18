@@ -13,7 +13,7 @@ const ProductSchema = new Schema({
   status: {
     type: String,
     required: true,
-    enum: ['available', 'unavailable', 'discontinued']
+    enum: ['active', 'draft', 'scheduled']
   },
   images: [{
     type: String,
@@ -55,6 +55,9 @@ const ProductSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Store',
     required: true
+  },
+  scheduledDate: {
+    type: Date,
   },
 }, {
   timestamps: true

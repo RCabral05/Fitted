@@ -12,12 +12,24 @@ export function ProductForm({ product, handleChange, handleFileChange, removeIma
           <textarea name="description" value={product.description} onChange={handleChange} required />
       </label>
       <label>Status:
-          <select name="status" value={product.status} onChange={handleChange} required>
-              <option value="available">Available</option>
-              <option value="unavailable">Unavailable</option>
-              <option value="discontinued">Discontinued</option>
-          </select>
-      </label>
+            <select name="status" value={product.status} onChange={handleChange} required>
+                <option value="active">Active</option>
+                <option value="draft">Draft</option>
+                <option value="scheduled">Scheduled</option>
+            </select>
+        </label>
+        {product.status === 'scheduled' && (
+            <label>Schedule Date:
+                <input
+                    type="datetime-local"
+                    name="scheduledDate"
+                    value={product.scheduledDate}
+                    onChange={handleChange}
+                    required={product.status === 'scheduled'}
+                />
+            </label>
+        )}
+
       <label>Images:</label>
       <div className="image-upload-container">
           {product.imagePreviews.map((imageUrl, index) => (

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import axios from 'axios';
 import Models from "../models/Products.js";
 import Tags from '../models/Tags.js';
-
+import cron from 'node-cron';
 
 import { multerUpload, uploadImage } from '../services/aws/bucket.js';
 
@@ -15,6 +15,20 @@ dotenv.config({ path: "./config.env" });
 
 const router = express.Router();
 
+cron.schedule('* * * * *', async () => {
+    console.log("Running a task every minute");
+    const now = new Date();
+    const productsToUpdate = await Products.find({
+        status: 'scheduled',
+        scheduledDate: { $lte: now }
+    });
+    console.log(productsToUpdate);
+    for (let product of productsToUpdate) {
+        product.status = 'active';
+        console.log('saving');
+        await product.save();
+    }
+});
 
 router.post("/api/add-product", multerUpload, async (req, res) => {
     const images = req.files['images'] || [];
