@@ -10,6 +10,7 @@ import products from './routes/products.js';
 import collections from './routes/collections.js';
 import myAdmin from './routes/myAdmin.js';
 import stripe from './routes/stripe.js';
+import favorite from './routes/favorite.js'
 
 // Initialize Express
 const app = express();
@@ -27,6 +28,7 @@ app.use(products);
 app.use(collections);
 app.use(myAdmin);
 app.use(stripe);
+app.use(favorite);
 // Constants
 const port = process.env.PORT || 3001;
 

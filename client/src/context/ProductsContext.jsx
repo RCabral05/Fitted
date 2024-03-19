@@ -117,6 +117,33 @@ export const ProductsProvider = ({ children }) => {
     }, []);
     // Inside ProductsProvider component
 
+    // Add these functions inside the ProductsProvider component
+
+    // Inside ProductsProvider component
+
+    const addToFavorites = useCallback(async (productId, userId) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_BASE_URL}api/favorites`, { userId, productId });
+            console.log('Added to favorites:', response.data);
+        } catch (error) {
+            console.error('Error adding to favorites:', error);
+        }
+    }, []);
+    
+    
+    const removeFromFavorites = useCallback(async (productId, userId) => {
+        try {
+            const url = `${process.env.REACT_APP_BASE_URL}api/favorites/${userId}/${productId}`;
+            const response = await axios.delete(url);
+            console.log('Removed from favorites:', response.data);
+        } catch (error) {
+            console.error('Error removing from favorites:', error);
+        }
+    }, []);
+    
+
+
+
     useEffect(() => {
         fetchTags(); // Fetch tags when the component mounts
     }, [fetchTags]);
@@ -132,6 +159,8 @@ export const ProductsProvider = ({ children }) => {
             fetchProductById,
             fetchTags,
             fetchActiveProducts,
+            addToFavorites,
+            removeFromFavorites,
             activeProducts,
         }}>
             {children}
