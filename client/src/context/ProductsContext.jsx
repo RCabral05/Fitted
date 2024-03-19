@@ -11,7 +11,7 @@ export const ProductsProvider = ({ children }) => {
     const [tags, setTags] = useState([]);
     const [storeProducts, setStoreProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // State to manage loading status
-
+    const [favorites, setFavorites] = useState([]);
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -140,6 +140,18 @@ export const ProductsProvider = ({ children }) => {
             console.error('Error removing from favorites:', error);
         }
     }, []);
+
+    const fetchFavorites = useCallback(async (userId) => {
+        setIsLoading(true);
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}api/favorites/${userId}`);
+            setFavorites(response.data.data); // Adjust according to your API response structure
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
     
 
 
@@ -161,6 +173,8 @@ export const ProductsProvider = ({ children }) => {
             fetchActiveProducts,
             addToFavorites,
             removeFromFavorites,
+            fetchFavorites,
+            favorites,
             activeProducts,
         }}>
             {children}

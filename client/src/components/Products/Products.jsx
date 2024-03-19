@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../context/ProductsContext';
-import { ProductList } from './ProductList/ProductList';
-import { SearchProducts } from '../SearchProducts/SearchProducts';
+import { ProductList } from './ProductList/ProductList'; // Ensure the path is correct
 import './styles.css';
 
 export const Products = () => {
   const { fetchActiveProducts, activeProducts } = useProducts();
-  const [isLoading, setIsLoading] = useState(true); // State to track loading status
-  console.log(activeProducts);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   useEffect(() => {
     const loadProducts = async () => {
       setIsLoading(true);
@@ -18,14 +19,31 @@ export const Products = () => {
     loadProducts();
   }, [fetchActiveProducts]);
 
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFilteredProducts(activeProducts);
+    } else {
+      const filtered = activeProducts.filter(product => 
+        product.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [searchTerm, activeProducts]);
+
   return (
     <div className="products">
       {isLoading ? (
-        <div>Loading products...</div> // Display loading message or spinner
+        <div>Loading products...</div>
       ) : (
         <>
-            <SearchProducts activeProducts={activeProducts}/>
-            {/* <ProductList products={activeProducts} /> */}
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+          <ProductList products={filteredProducts.length > 0 ? filteredProducts : activeProducts} />
         </>
       )}
     </div>

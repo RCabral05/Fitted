@@ -1,7 +1,8 @@
 import express from "express";
 import Favorite from "../models/Favorite.js"; // Adjust the path as necessary
 // Import other required models, like User or Product, if needed
-
+import Models from "../models/Products.js";
+const { Products, Variants } = Models;
 const router = express.Router();
 
 // Route to add a product to favorites
@@ -56,14 +57,26 @@ router.delete("/api/favorites/:userId/:productId", async (req, res) => {
 router.get("/api/favorites/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    const favorites = await Favorite.find({ user: userId }).populate('product');
+    const favorites = await Favorite.find({ discordId: userId });
 
-    res.status(200).json({ data: favorites });
+    if (!favorites.length) {
+      return res.status(404).json({ message: "No favorites found" });
+    }
+
+    const productIds = favorites.map(fav => fav.product);
+
+    const products = await Products.find({
+      '_id': { $in: productIds }
+    }).populate('variant');
+
+    res.status(200).json({ data: products });
   } catch (error) {
     console.error("Error fetching favorites:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
 
 router.get('/api/favorites/:userId/:productId', async (req, res) => {
     const { userId, productId } = req.params;

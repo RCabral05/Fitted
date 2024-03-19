@@ -25,24 +25,25 @@ export const Navbar = () => {
   ];
 
   return (
-    <AppBar position="static">
-      <Toolbar>
+    <AppBar position="static" className="app-bar">
+      <Toolbar className="toolbar">
         <IconButton
           color="inherit"
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2, display: { sm: 'block' }, height:'7vh'}}
+          className="menu-button"
+          sx={{ mr: 2 }}
         >
           {isDrawerOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
-          Your App Name
+        <Typography variant="h6" component="div" className="title">
+          FULLY FITTED
         </Typography>
-        <List sx={{ display: { xs: 'none', sm: 'flex' } }}>
+        <List className="desktop-menu">
           {menuItems.map((item) => (
-            <ListItem button key={item.text} component="a" href={item.path}>
-              <ListItemText primary={item.text} />
+            <ListItem button key={item.text} component="a" href={item.path} sx={{ padding: 0 }}>
+              <ListItemText primary={item.text} className="desktop-menu-item" />
             </ListItem>
           ))}
         </List>
@@ -52,22 +53,18 @@ export const Navbar = () => {
         open={isDrawerOpen}
         onClose={handleDrawerToggle}
         sx={{
-          width: '50%',
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: '50%',
-            boxSizing: 'border-box',
-          },
+          '& .MuiDrawer-paper': { width: '50%', boxSizing: 'border-box' },
         }}
       >
-        <List>
+        <List className="drawer-list">
           {menuItems.map((item) => (
-            <ListItem button key={item.text} onClick={handleDrawerToggle} component="a" href={item.path}>
+            <ListItem button key={item.text} onClick={handleDrawerToggle} component="a" href={item.path} className="drawer-item">
               <ListItemText primary={item.text} />
             </ListItem>
           ))}
         </List>
       </Drawer>
     </AppBar>
+
   );
 };
