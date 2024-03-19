@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../context/ProductsContext';
 import { ProductList } from './ProductList/ProductList';
+import { SearchProducts } from '../SearchProducts/SearchProducts';
 import './styles.css';
 
 export const Products = () => {
@@ -22,7 +23,10 @@ export const Products = () => {
       {isLoading ? (
         <div>Loading products...</div> // Display loading message or spinner
       ) : (
-        <ProductList products={activeProducts} />
+        <>
+            <SearchProducts activeProducts={activeProducts}/>
+            {/* <ProductList products={activeProducts} /> */}
+        </>
       )}
     </div>
   );

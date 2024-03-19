@@ -2,13 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './styles.css';
 
 const cartesianProduct = (arr) => {
-    if (arr.length === 0) {
-        return [[]]; // Return a single empty array to handle the base case
-    }
-
-    return arr.reduce((a, b) => {
-        return a.flatMap((d) => b.map((e) => [d, e].flat()));
-    }, [[]]); // Start with an array containing one empty array
+    return arr.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())), [[]]);
 };
 
 
@@ -18,7 +12,7 @@ const generateVariantCombinations = (options) => {
     const values = options.map((option) => option.values);
     // Get the cartesian product of all option values
     const combinations = cartesianProduct(values);
-    console.log(combinations);
+    console.log('combo', combinations);
     // Map the combinations to an object with option names as keys
     return combinations.map((combination) => ({
         variantQuantity: '',
@@ -144,8 +138,9 @@ export function Variants({
             ))}
 
                     {variantCombinations?.map((variant, index) => (
+                        console.log('var',variant),
                         <div key={index} className="variant-combination-section">
-                            <p>Variant Combination: {JSON.stringify(variant.color + '/' + variant.size)}</p>
+                            <p>Variant Combination: {JSON.stringify(variant.Size + '/' + variant.color)}</p>
                             <label>Variant Quantity:
                                 <input
                                     type="number"
