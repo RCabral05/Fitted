@@ -5,11 +5,11 @@ import { useProducts } from '../../../../context/ProductsContext';
 import { BrandAddProducts } from '../AddProducts/BrandAddProducts';
 import { BrandUpdateProducts } from '../EditProducts/BrandUpdateProducts';
 
-export function BrandProducts({ products, store }) {
+export function BrandProducts({ store }) {
   const { stores } = useStores();
   const [view, setView] = useState('products');
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { deleteProduct } = useProducts();
+  const { products, deleteProduct } = useProducts();
 
   const toggleView = () => {
     setView(view !== 'products' ? 'products' : 'add');
